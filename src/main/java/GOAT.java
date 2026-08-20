@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import java.util.Scanner;
 
 /**
@@ -50,14 +51,13 @@ public class GOAT {
     private static final String KNOWN_COMMANDS =
             "todo, deadline, event, list, mark, unmark, bye";
 
-    /** Upper bound on stored tasks; the fixed array is replaced by a list in Level-6. */
-    private static final int MAX_TASKS = 100;
-
-    /** Stored tasks, filled from index 0 upwards. */
-    private static final Task[] tasks = new Task[MAX_TASKS];
-
-    /** Number of slots of {@link #tasks} currently in use. */
-    private static int taskCount = 0;
+    /**
+     * Stored tasks, in the order the user added them.
+     * <p>
+     * An {@link ArrayList} grows on demand, so it replaces both the fixed array and the
+     * separate counter that tracked how much of that array was in use.
+     */
+    private static final ArrayList<Task> tasks = new ArrayList<>();
 
     public static void main(String[] args) {
         System.out.println(BANNER);
@@ -121,19 +121,20 @@ public class GOAT {
      * Stores a new task and confirms it, along with the new task count.
      *
      * @param task the task to store
-     * @throws GOATException if the list is already at its fixed capacity
      */
-    private static void addTask(Task task) throws GOATException {
-        if (taskCount == MAX_TASKS) {
-            throw new GOATException("Your list is full at " + MAX_TASKS
-                    + " tasks, so I cannot add another one.");
-        }
-        tasks[taskCount] = task;
-        taskCount++;
-        respond("Got it. I've added this task:",
-                "  " + task,
-                "Now you have " + taskCount + (taskCount == 1 ? " task" : " tasks")
-                        + " in the list.");
+    private static void addTask(Task task) {
+        tasks.add(task);
+        respond("Got it. I've added this task:", "  " + task, taskCountSummary());
+    }
+
+    /**
+     * Returns the sentence reporting how many tasks are now stored.
+     *
+     * @return text such as {@code Now you have 3 tasks in the list.}
+     */
+    private static String taskCountSummary() {
+        int count = tasks.size();
+        return "Now you have " + count + (count == 1 ? " task" : " tasks") + " in the list.";
     }
 
     /**
@@ -159,13 +160,13 @@ public class GOAT {
                     + " number instead, as in \"" + commandName + " 2\".");
         }
 
-        if (taskCount == 0) {
+        if (tasks.isEmpty()) {
             throw new GOATException("Your list is empty, so there is nothing to "
                     + commandName + " yet.");
         }
-        if (taskNumber < 1 || taskNumber > taskCount) {
+        if (taskNumber < 1 || taskNumber > tasks.size()) {
             throw new GOATException("There is no task " + taskNumber + ". Pick a number"
-                    + " from 1 to " + taskCount + ".");
+                    + " from 1 to " + tasks.size() + ".");
         }
         return taskNumber;
     }
@@ -260,8 +261,9 @@ public class GOAT {
      */
     private static void markTask(int taskNumber) {
         int index = taskNumber - 1;
-        tasks[index].markAsDone();
-        respond("Nice! I've marked this task as done:", "  " + tasks[index]);
+        Task task = tasks.get(index);
+        task.markAsDone();
+        respond("Nice! I've marked this task as done:", "  " + task);
     }
 
     /**
@@ -271,16 +273,17 @@ public class GOAT {
      */
     private static void unmarkTask(int taskNumber) {
         int index = taskNumber - 1;
-        tasks[index].markAsNotDone();
-        respond("OK, I've marked this task as not done yet:", "  " + tasks[index]);
+        Task task = tasks.get(index);
+        task.markAsNotDone();
+        respond("OK, I've marked this task as not done yet:", "  " + task);
     }
 
     /** Prints every stored task, numbered from 1, with its completion status. */
     private static void listTasks() {
-        String[] lines = new String[taskCount + 1];
+        String[] lines = new String[tasks.size() + 1];
         lines[0] = "Here are the tasks in your list:";
-        for (int i = 0; i < taskCount; i++) {
-            lines[i + 1] = (i + 1) + "." + tasks[i];
+        for (int i = 0; i < tasks.size(); i++) {
+            lines[i + 1] = (i + 1) + "." + tasks.get(i);
         }
         respond(lines);
     }
