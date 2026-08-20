@@ -1,7 +1,10 @@
+import java.util.Scanner;
+
 /**
  * Entry point for the GOAT chatbot.
  * <p>
- * At this increment GOAT simply greets the user and exits.
+ * GOAT reads commands from standard input one line at a time and echoes them back,
+ * stopping when the user types {@code bye}.
  */
 public class GOAT {
 
@@ -21,28 +24,47 @@ public class GOAT {
  \\____| \\___/ /_/   \\_\\  |_|
 """;
 
+    /** Command that ends the conversation. */
+    private static final String EXIT_COMMAND = "bye";
+
     public static void main(String[] args) {
         System.out.println(BANNER);
         greet();
+
+        Scanner scanner = new Scanner(System.in);
+        // hasNextLine() is false at end of input, so piped input and Ctrl-D exit cleanly
+        // instead of looping forever.
+        while (scanner.hasNextLine()) {
+            String input = scanner.nextLine().trim();
+            if (input.equals(EXIT_COMMAND)) {
+                break;
+            }
+            respond(input);
+        }
+
         farewell();
     }
 
-    /** Prints the horizontal rule that brackets every response. */
-    private static void showLine() {
+    /**
+     * Prints one reply, wrapped in horizontal rules and indented.
+     *
+     * @param messages lines of the reply, printed in order
+     */
+    private static void respond(String... messages) {
+        System.out.println(LINE);
+        for (String message : messages) {
+            System.out.println(" " + message);
+        }
         System.out.println(LINE);
     }
 
     /** Prints the opening message shown when the program starts. */
     private static void greet() {
-        showLine();
-        System.out.println(" Hello! I'm " + NAME);
-        System.out.println(" What can I do for you?");
-        showLine();
+        respond("Hello! I'm " + NAME, "What can I do for you?");
     }
 
     /** Prints the closing message shown just before the program ends. */
     private static void farewell() {
-        System.out.println(" Bye. Hope to see you again soon!");
-        showLine();
+        respond("Bye. Hope to see you again soon!");
     }
 }
