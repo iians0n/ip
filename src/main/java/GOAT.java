@@ -40,11 +40,8 @@ public class GOAT {
     /** Upper bound on stored tasks; the fixed array is replaced by a list in Level-6. */
     private static final int MAX_TASKS = 100;
 
-    /** Task descriptions, filled from index 0 upwards. */
-    private static final String[] tasks = new String[MAX_TASKS];
-
-    /** Completion flag for each task, parallel to {@link #tasks}. */
-    private static final boolean[] isDone = new boolean[MAX_TASKS];
+    /** Stored tasks, filled from index 0 upwards. */
+    private static final Task[] tasks = new Task[MAX_TASKS];
 
     /** Number of slots of {@link #tasks} currently in use. */
     private static int taskCount = 0;
@@ -95,7 +92,7 @@ public class GOAT {
      * @param description the task text exactly as the user typed it
      */
     private static void addTask(String description) {
-        tasks[taskCount] = description;
+        tasks[taskCount] = new Task(description);
         taskCount++;
         respond("added: " + description);
     }
@@ -107,9 +104,8 @@ public class GOAT {
      */
     private static void markTask(int taskNumber) {
         int index = taskNumber - 1;
-        isDone[index] = true;
-        respond("Nice! I've marked this task as done:",
-                "  " + statusIcon(index) + " " + tasks[index]);
+        tasks[index].markAsDone();
+        respond("Nice! I've marked this task as done:", "  " + tasks[index]);
     }
 
     /**
@@ -119,19 +115,8 @@ public class GOAT {
      */
     private static void unmarkTask(int taskNumber) {
         int index = taskNumber - 1;
-        isDone[index] = false;
-        respond("OK, I've marked this task as not done yet:",
-                "  " + statusIcon(index) + " " + tasks[index]);
-    }
-
-    /**
-     * Returns the completion marker for a task.
-     *
-     * @param index zero-based position in {@link #tasks}
-     * @return {@code [X]} if done, {@code [ ]} otherwise
-     */
-    private static String statusIcon(int index) {
-        return isDone[index] ? "[X]" : "[ ]";
+        tasks[index].markAsNotDone();
+        respond("OK, I've marked this task as not done yet:", "  " + tasks[index]);
     }
 
     /** Prints every stored task, numbered from 1, with its completion status. */
@@ -139,7 +124,7 @@ public class GOAT {
         String[] lines = new String[taskCount + 1];
         lines[0] = "Here are the tasks in your list:";
         for (int i = 0; i < taskCount; i++) {
-            lines[i + 1] = (i + 1) + "." + statusIcon(i) + " " + tasks[i];
+            lines[i + 1] = (i + 1) + "." + tasks[i];
         }
         respond(lines);
     }
