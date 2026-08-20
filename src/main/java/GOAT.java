@@ -3,8 +3,9 @@ import java.util.Scanner;
 /**
  * Entry point for the GOAT chatbot.
  * <p>
- * GOAT reads commands from standard input one line at a time and echoes them back,
- * stopping when the user types {@code bye}.
+ * GOAT reads commands from standard input one line at a time. Any line that is not a
+ * recognised command is stored as a task; {@code list} prints the stored tasks and
+ * {@code bye} ends the conversation.
  */
 public class GOAT {
 
@@ -27,6 +28,18 @@ public class GOAT {
     /** Command that ends the conversation. */
     private static final String EXIT_COMMAND = "bye";
 
+    /** Command that prints every stored task. */
+    private static final String LIST_COMMAND = "list";
+
+    /** Upper bound on stored tasks; the fixed array is replaced by a list in Level-6. */
+    private static final int MAX_TASKS = 100;
+
+    /** Task descriptions, filled from index 0 upwards. */
+    private static final String[] tasks = new String[MAX_TASKS];
+
+    /** Number of slots of {@link #tasks} currently in use. */
+    private static int taskCount = 0;
+
     public static void main(String[] args) {
         System.out.println(BANNER);
         greet();
@@ -38,8 +51,11 @@ public class GOAT {
             String input = scanner.nextLine().trim();
             if (input.equals(EXIT_COMMAND)) {
                 break;
+            } else if (input.equals(LIST_COMMAND)) {
+                listTasks();
+            } else {
+                addTask(input);
             }
-            respond(input);
         }
 
         farewell();
@@ -56,6 +72,26 @@ public class GOAT {
             System.out.println(" " + message);
         }
         System.out.println(LINE);
+    }
+
+    /**
+     * Stores a new task and confirms it to the user.
+     *
+     * @param description the task text exactly as the user typed it
+     */
+    private static void addTask(String description) {
+        tasks[taskCount] = description;
+        taskCount++;
+        respond("added: " + description);
+    }
+
+    /** Prints every stored task, numbered from 1. */
+    private static void listTasks() {
+        String[] lines = new String[taskCount];
+        for (int i = 0; i < taskCount; i++) {
+            lines[i] = (i + 1) + ". " + tasks[i];
+        }
+        respond(lines);
     }
 
     /** Prints the opening message shown when the program starts. */
