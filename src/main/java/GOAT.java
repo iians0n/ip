@@ -31,11 +31,17 @@ public class GOAT {
     /** Command that prints every stored task. */
     private static final String LIST_COMMAND = "list";
 
+    /** Command that marks a task as done, used as {@code mark N}. */
+    private static final String MARK_COMMAND = "mark";
+
     /** Upper bound on stored tasks; the fixed array is replaced by a list in Level-6. */
     private static final int MAX_TASKS = 100;
 
     /** Task descriptions, filled from index 0 upwards. */
     private static final String[] tasks = new String[MAX_TASKS];
+
+    /** Completion flag for each task, parallel to {@link #tasks}. */
+    private static final boolean[] isDone = new boolean[MAX_TASKS];
 
     /** Number of slots of {@link #tasks} currently in use. */
     private static int taskCount = 0;
@@ -53,6 +59,9 @@ public class GOAT {
                 break;
             } else if (input.equals(LIST_COMMAND)) {
                 listTasks();
+            } else if (input.startsWith(MARK_COMMAND + " ")) {
+                String argument = input.substring(MARK_COMMAND.length() + 1).trim();
+                markTask(Integer.parseInt(argument));
             } else {
                 addTask(input);
             }
@@ -85,11 +94,34 @@ public class GOAT {
         respond("added: " + description);
     }
 
-    /** Prints every stored task, numbered from 1. */
+    /**
+     * Marks a task as done and echoes it back.
+     *
+     * @param taskNumber the position shown by {@code list}, counting from 1
+     */
+    private static void markTask(int taskNumber) {
+        int index = taskNumber - 1;
+        isDone[index] = true;
+        respond("Nice! I've marked this task as done:",
+                "  " + statusIcon(index) + " " + tasks[index]);
+    }
+
+    /**
+     * Returns the completion marker for a task.
+     *
+     * @param index zero-based position in {@link #tasks}
+     * @return {@code [X]} if done, {@code [ ]} otherwise
+     */
+    private static String statusIcon(int index) {
+        return isDone[index] ? "[X]" : "[ ]";
+    }
+
+    /** Prints every stored task, numbered from 1, with its completion status. */
     private static void listTasks() {
-        String[] lines = new String[taskCount];
+        String[] lines = new String[taskCount + 1];
+        lines[0] = "Here are the tasks in your list:";
         for (int i = 0; i < taskCount; i++) {
-            lines[i] = (i + 1) + ". " + tasks[i];
+            lines[i + 1] = (i + 1) + "." + statusIcon(i) + " " + tasks[i];
         }
         respond(lines);
     }
