@@ -27,34 +27,6 @@ public class GOAT {
  \\____| \\___/ /_/   \\_\\  |_|
 """;
 
-    /** Command that ends the conversation. */
-    private static final String EXIT_COMMAND = "bye";
-
-    /** Command that prints every stored task. */
-    private static final String LIST_COMMAND = "list";
-
-    /** Command that marks a task as done, used as {@code mark N}. */
-    private static final String MARK_COMMAND = "mark";
-
-    /** Command that marks a task as not done, used as {@code unmark N}. */
-    private static final String UNMARK_COMMAND = "unmark";
-
-    /** Command that adds a plain task, used as {@code todo DESCRIPTION}. */
-    private static final String TODO_COMMAND = "todo";
-
-    /** Command that adds a due task, used as {@code deadline DESCRIPTION /by WHEN}. */
-    private static final String DEADLINE_COMMAND = "deadline";
-
-    /** Command that adds a timed task, used as {@code event DESC /from START /to END}. */
-    private static final String EVENT_COMMAND = "event";
-
-    /** Command that removes a task, used as {@code delete N}. */
-    private static final String DELETE_COMMAND = "delete";
-
-    /** Commands listed back to the user when input is not understood. */
-    private static final String KNOWN_COMMANDS =
-            "todo, deadline, event, list, mark, unmark, delete, bye";
-
     /**
      * Stored tasks, in the order the user added them.
      * <p>
@@ -68,37 +40,27 @@ public class GOAT {
         greet();
 
         Scanner scanner = new Scanner(System.in);
+        boolean isRunning = true;
+
         // hasNextLine() is false at end of input, so piped input and Ctrl-D exit cleanly
         // instead of looping forever.
-        while (scanner.hasNextLine()) {
+        while (isRunning && scanner.hasNextLine()) {
             String input = scanner.nextLine().trim();
             String[] parts = input.split(" ", 2);
-            String command = parts[0];
+            String keyword = parts[0];
             String arguments = parts.length > 1 ? parts[1].trim() : "";
 
             try {
-                if (command.equals(EXIT_COMMAND)) {
-                    break;
-                } else if (command.equals(LIST_COMMAND)) {
-                    listTasks();
-                } else if (command.equals(MARK_COMMAND)) {
-                    markTask(parseTaskNumber(arguments, MARK_COMMAND));
-                } else if (command.equals(UNMARK_COMMAND)) {
-                    unmarkTask(parseTaskNumber(arguments, UNMARK_COMMAND));
-                } else if (command.equals(DELETE_COMMAND)) {
-                    deleteTask(parseTaskNumber(arguments, DELETE_COMMAND));
-                } else if (command.equals(TODO_COMMAND)) {
-                    addTask(parseTodo(arguments));
-                } else if (command.equals(DEADLINE_COMMAND)) {
-                    addTask(parseDeadline(arguments));
-                } else if (command.equals(EVENT_COMMAND)) {
-                    addTask(parseEvent(arguments));
-                } else if (command.isEmpty()) {
-                    throw new GOATException("I did not catch a command there. I know: "
-                            + KNOWN_COMMANDS + ".");
-                } else {
-                    throw new GOATException("I do not know the command \"" + command
-                            + "\". I know: " + KNOWN_COMMANDS + ".");
+                Command command = Command.fromKeyword(keyword);
+                switch (command) {
+                    case BYE -> isRunning = false;
+                    case LIST -> listTasks();
+                    case MARK -> markTask(parseTaskNumber(arguments, command));
+                    case UNMARK -> unmarkTask(parseTaskNumber(arguments, command));
+                    case DELETE -> deleteTask(parseTaskNumber(arguments, command));
+                    case TODO -> addTask(parseTodo(arguments));
+                    case DEADLINE -> addTask(parseDeadline(arguments));
+                    case EVENT -> addTask(parseEvent(arguments));
                 }
             } catch (GOATException e) {
                 // One catch for the whole loop: a rejected command reports itself and
@@ -160,15 +122,16 @@ public class GOAT {
      * Reads the 1-based task number given to a command such as {@code mark}.
      *
      * @param arguments text following the command
-     * @param commandName the command being run, used in the error messages
+     * @param command the command being run, named in the error messages
      * @return a task number that is known to be within range
      * @throws GOATException if the number is missing, not a number, or out of range
      */
-    private static int parseTaskNumber(String arguments, String commandName)
+    private static int parseTaskNumber(String arguments, Command command)
             throws GOATException {
+        String name = command.keyword();
         if (arguments.isEmpty()) {
-            throw new GOATException(commandName + " needs a task number, as in \""
-                    + commandName + " 2\".");
+            throw new GOATException(name + " needs a task number, as in \""
+                    + name + " 2\".");
         }
 
         int taskNumber;
@@ -176,12 +139,12 @@ public class GOAT {
             taskNumber = Integer.parseInt(arguments);
         } catch (NumberFormatException e) {
             throw new GOATException("\"" + arguments + "\" is not a number. Give me a task"
-                    + " number instead, as in \"" + commandName + " 2\".");
+                    + " number instead, as in \"" + name + " 2\".");
         }
 
         if (tasks.isEmpty()) {
             throw new GOATException("Your list is empty, so there is nothing to "
-                    + commandName + " yet.");
+                    + name + " yet.");
         }
         if (taskNumber < 1 || taskNumber > tasks.size()) {
             throw new GOATException("There is no task " + taskNumber + ". Pick a number"
