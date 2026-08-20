@@ -34,6 +34,9 @@ public class GOAT {
     /** Command that marks a task as done, used as {@code mark N}. */
     private static final String MARK_COMMAND = "mark";
 
+    /** Command that marks a task as not done, used as {@code unmark N}. */
+    private static final String UNMARK_COMMAND = "unmark";
+
     /** Upper bound on stored tasks; the fixed array is replaced by a list in Level-6. */
     private static final int MAX_TASKS = 100;
 
@@ -62,6 +65,9 @@ public class GOAT {
             } else if (input.startsWith(MARK_COMMAND + " ")) {
                 String argument = input.substring(MARK_COMMAND.length() + 1).trim();
                 markTask(Integer.parseInt(argument));
+            } else if (input.startsWith(UNMARK_COMMAND + " ")) {
+                String argument = input.substring(UNMARK_COMMAND.length() + 1).trim();
+                unmarkTask(Integer.parseInt(argument));
             } else {
                 addTask(input);
             }
@@ -103,6 +109,18 @@ public class GOAT {
         int index = taskNumber - 1;
         isDone[index] = true;
         respond("Nice! I've marked this task as done:",
+                "  " + statusIcon(index) + " " + tasks[index]);
+    }
+
+    /**
+     * Marks a task as not done and echoes it back.
+     *
+     * @param taskNumber the position shown by {@code list}, counting from 1
+     */
+    private static void unmarkTask(int taskNumber) {
+        int index = taskNumber - 1;
+        isDone[index] = false;
+        respond("OK, I've marked this task as not done yet:",
                 "  " + statusIcon(index) + " " + tasks[index]);
     }
 
