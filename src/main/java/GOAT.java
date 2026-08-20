@@ -6,7 +6,8 @@ import java.util.Scanner;
  * <p>
  * GOAT reads commands from standard input one line at a time. {@code todo},
  * {@code deadline} and {@code event} add tasks, {@code mark} and {@code unmark}
- * change their status, {@code list} prints them and {@code bye} ends the conversation.
+ * change their status, {@code delete} removes one, {@code list} prints them and
+ * {@code bye} ends the conversation.
  */
 public class GOAT {
 
@@ -47,9 +48,12 @@ public class GOAT {
     /** Command that adds a timed task, used as {@code event DESC /from START /to END}. */
     private static final String EVENT_COMMAND = "event";
 
+    /** Command that removes a task, used as {@code delete N}. */
+    private static final String DELETE_COMMAND = "delete";
+
     /** Commands listed back to the user when input is not understood. */
     private static final String KNOWN_COMMANDS =
-            "todo, deadline, event, list, mark, unmark, bye";
+            "todo, deadline, event, list, mark, unmark, delete, bye";
 
     /**
      * Stored tasks, in the order the user added them.
@@ -81,6 +85,8 @@ public class GOAT {
                     markTask(parseTaskNumber(arguments, MARK_COMMAND));
                 } else if (command.equals(UNMARK_COMMAND)) {
                     unmarkTask(parseTaskNumber(arguments, UNMARK_COMMAND));
+                } else if (command.equals(DELETE_COMMAND)) {
+                    deleteTask(parseTaskNumber(arguments, DELETE_COMMAND));
                 } else if (command.equals(TODO_COMMAND)) {
                     addTask(parseTodo(arguments));
                 } else if (command.equals(DEADLINE_COMMAND)) {
@@ -125,6 +131,19 @@ public class GOAT {
     private static void addTask(Task task) {
         tasks.add(task);
         respond("Got it. I've added this task:", "  " + task, taskCountSummary());
+    }
+
+    /**
+     * Removes a task from the list and reports what was removed.
+     *
+     * @param taskNumber the position shown by {@code list}, counting from 1
+     */
+    private static void deleteTask(int taskNumber) {
+        // remove() returns the removed element, so the confirmation can show the task
+        // even though it is no longer in the list. Later tasks shift down by one, which
+        // is why list renumbers them automatically.
+        Task removed = tasks.remove(taskNumber - 1);
+        respond("Noted. I've removed this task:", "  " + removed, taskCountSummary());
     }
 
     /**

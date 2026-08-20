@@ -8,10 +8,13 @@ list
 unmark 2
 mark 4
 list
+delete 3
+list
 todo
 blah
 mark 99
 mark abc
 deadline x
 event y /from Mon
+delete 99
 bye
