@@ -5,7 +5,7 @@
  * object replaces the parallel arrays used before this increment, so a task's text and
  * its status can no longer drift apart.
  */
-public class Task {
+public abstract class Task {
 
     /**
      * What the user wants to do. Protected rather than private so that the task-type
