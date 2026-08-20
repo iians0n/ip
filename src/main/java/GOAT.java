@@ -46,6 +46,10 @@ public class GOAT {
     /** Command that adds a timed task, used as {@code event DESC /from START /to END}. */
     private static final String EVENT_COMMAND = "event";
 
+    /** Commands listed back to the user when input is not understood. */
+    private static final String KNOWN_COMMANDS =
+            "todo, deadline, event, list, mark, unmark, bye";
+
     /** Upper bound on stored tasks; the fixed array is replaced by a list in Level-6. */
     private static final int MAX_TASKS = 100;
 
@@ -68,22 +72,32 @@ public class GOAT {
             String command = parts[0];
             String arguments = parts.length > 1 ? parts[1].trim() : "";
 
-            if (command.equals(EXIT_COMMAND)) {
-                break;
-            } else if (command.equals(LIST_COMMAND)) {
-                listTasks();
-            } else if (command.equals(MARK_COMMAND)) {
-                markTask(Integer.parseInt(arguments));
-            } else if (command.equals(UNMARK_COMMAND)) {
-                unmarkTask(Integer.parseInt(arguments));
-            } else if (command.equals(TODO_COMMAND)) {
-                addTask(new Todo(arguments));
-            } else if (command.equals(DEADLINE_COMMAND)) {
-                addTask(parseDeadline(arguments));
-            } else if (command.equals(EVENT_COMMAND)) {
-                addTask(parseEvent(arguments));
-            } else {
-                respond("Sorry, I don't recognise the command \"" + command + "\".");
+            try {
+                if (command.equals(EXIT_COMMAND)) {
+                    break;
+                } else if (command.equals(LIST_COMMAND)) {
+                    listTasks();
+                } else if (command.equals(MARK_COMMAND)) {
+                    markTask(parseTaskNumber(arguments, MARK_COMMAND));
+                } else if (command.equals(UNMARK_COMMAND)) {
+                    unmarkTask(parseTaskNumber(arguments, UNMARK_COMMAND));
+                } else if (command.equals(TODO_COMMAND)) {
+                    addTask(parseTodo(arguments));
+                } else if (command.equals(DEADLINE_COMMAND)) {
+                    addTask(parseDeadline(arguments));
+                } else if (command.equals(EVENT_COMMAND)) {
+                    addTask(parseEvent(arguments));
+                } else if (command.isEmpty()) {
+                    throw new GOATException("I did not catch a command there. I know: "
+                            + KNOWN_COMMANDS + ".");
+                } else {
+                    throw new GOATException("I do not know the command \"" + command
+                            + "\". I know: " + KNOWN_COMMANDS + ".");
+                }
+            } catch (GOATException e) {
+                // One catch for the whole loop: a rejected command reports itself and
+                // GOAT carries on with the next line instead of terminating.
+                respond(e.getMessage());
             }
         }
 
@@ -107,8 +121,13 @@ public class GOAT {
      * Stores a new task and confirms it, along with the new task count.
      *
      * @param task the task to store
+     * @throws GOATException if the list is already at its fixed capacity
      */
-    private static void addTask(Task task) {
+    private static void addTask(Task task) throws GOATException {
+        if (taskCount == MAX_TASKS) {
+            throw new GOATException("Your list is full at " + MAX_TASKS
+                    + " tasks, so I cannot add another one.");
+        }
         tasks[taskCount] = task;
         taskCount++;
         respond("Got it. I've added this task:",
@@ -118,15 +137,79 @@ public class GOAT {
     }
 
     /**
+     * Reads the 1-based task number given to a command such as {@code mark}.
+     *
+     * @param arguments text following the command
+     * @param commandName the command being run, used in the error messages
+     * @return a task number that is known to be within range
+     * @throws GOATException if the number is missing, not a number, or out of range
+     */
+    private static int parseTaskNumber(String arguments, String commandName)
+            throws GOATException {
+        if (arguments.isEmpty()) {
+            throw new GOATException(commandName + " needs a task number, as in \""
+                    + commandName + " 2\".");
+        }
+
+        int taskNumber;
+        try {
+            taskNumber = Integer.parseInt(arguments);
+        } catch (NumberFormatException e) {
+            throw new GOATException("\"" + arguments + "\" is not a number. Give me a task"
+                    + " number instead, as in \"" + commandName + " 2\".");
+        }
+
+        if (taskCount == 0) {
+            throw new GOATException("Your list is empty, so there is nothing to "
+                    + commandName + " yet.");
+        }
+        if (taskNumber < 1 || taskNumber > taskCount) {
+            throw new GOATException("There is no task " + taskNumber + ". Pick a number"
+                    + " from 1 to " + taskCount + ".");
+        }
+        return taskNumber;
+    }
+
+    /**
+     * Builds a to-do from the text following the {@code todo} command.
+     *
+     * @param arguments the description
+     * @return the parsed to-do
+     * @throws GOATException if the description is missing
+     */
+    private static Todo parseTodo(String arguments) throws GOATException {
+        if (arguments.isEmpty()) {
+            throw new GOATException("A todo needs a description, as in"
+                    + " \"todo borrow book\".");
+        }
+        return new Todo(arguments);
+    }
+
+    /**
      * Builds a deadline from the text following the {@code deadline} command.
      *
      * @param arguments text of the form {@code DESCRIPTION /by WHEN}
      * @return the parsed deadline
+     * @throws GOATException if the description, the {@code /by}, or the time is missing
      */
-    private static Deadline parseDeadline(String arguments) {
+    private static Deadline parseDeadline(String arguments) throws GOATException {
+        String example = "\"deadline return book /by Sunday\"";
         int byIndex = arguments.indexOf("/by");
+        if (byIndex < 0) {
+            throw new GOATException("A deadline needs a /by to say when it is due, as in "
+                    + example + ".");
+        }
+
         String description = arguments.substring(0, byIndex).trim();
         String by = arguments.substring(byIndex + "/by".length()).trim();
+        if (description.isEmpty()) {
+            throw new GOATException("A deadline needs a description before the /by, as in "
+                    + example + ".");
+        }
+        if (by.isEmpty()) {
+            throw new GOATException("The /by is empty. Tell me when it is due, as in "
+                    + example + ".");
+        }
         return new Deadline(description, by);
     }
 
@@ -135,13 +218,38 @@ public class GOAT {
      *
      * @param arguments text of the form {@code DESCRIPTION /from START /to END}
      * @return the parsed event
+     * @throws GOATException if the description, {@code /from} or {@code /to} is missing
      */
-    private static Event parseEvent(String arguments) {
+    private static Event parseEvent(String arguments) throws GOATException {
+        String example = "\"event project meeting /from Mon 2pm /to 4pm\"";
         int fromIndex = arguments.indexOf("/from");
-        int toIndex = arguments.indexOf("/to", fromIndex + 1);
+        if (fromIndex < 0) {
+            throw new GOATException("An event needs a /from to say when it starts, as in "
+                    + example + ".");
+        }
+
+        // Search after /from so that a /to written before it is not mistaken for the end.
+        int toIndex = arguments.indexOf("/to", fromIndex + "/from".length());
+        if (toIndex < 0) {
+            throw new GOATException("An event needs a /to after the /from, as in "
+                    + example + ".");
+        }
+
         String description = arguments.substring(0, fromIndex).trim();
         String from = arguments.substring(fromIndex + "/from".length(), toIndex).trim();
         String to = arguments.substring(toIndex + "/to".length()).trim();
+        if (description.isEmpty()) {
+            throw new GOATException("An event needs a description before the /from, as in "
+                    + example + ".");
+        }
+        if (from.isEmpty()) {
+            throw new GOATException("The /from is empty. Tell me when it starts, as in "
+                    + example + ".");
+        }
+        if (to.isEmpty()) {
+            throw new GOATException("The /to is empty. Tell me when it ends, as in "
+                    + example + ".");
+        }
         return new Event(description, from, to);
     }
 
