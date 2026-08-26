@@ -49,6 +49,7 @@ public class Event extends Task {
      * @param date the date to test
      * @return true if the date falls within the event, endpoints included
      */
+    @Override
     public boolean occursOn(LocalDate date) {
         return !date.isBefore(from) && !date.isAfter(to);
     }

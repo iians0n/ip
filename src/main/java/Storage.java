@@ -38,8 +38,8 @@ public class Storage {
      * @return the saved tasks in file order, or an empty list if there is no save file
      * @throws GOATException if the file exists but cannot be read at all
      */
-    public ArrayList<Task> load() throws GOATException {
-        ArrayList<Task> tasks = new ArrayList<>();
+    public List<Task> load() throws GOATException {
+        List<Task> tasks = new ArrayList<>();
         skippedLineCount = 0;
         if (!Files.exists(filePath)) {
             return tasks;
