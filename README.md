@@ -56,6 +56,21 @@ To compile, run the tests and assemble everything:
 ./gradlew build
 ```
 
+## Building a runnable JAR
+
+```bash
+./gradlew shadowJar
+```
+
+This produces `build/libs/goat.jar`, which bundles its dependencies and runs on its own:
+
+```bash
+java -jar goat.jar
+```
+
+GOAT saves to `data/goat.txt` relative to the folder it is run from, so running the JAR
+in a new folder starts a fresh list there.
+
 ## Running from the command line
 
 ```bash
