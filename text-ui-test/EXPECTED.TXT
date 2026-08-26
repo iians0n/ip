@@ -20,7 +20,7 @@ ____________________________________________________________
 ____________________________________________________________
 ____________________________________________________________
  Got it. I've added this task:
-   [E][ ] project meeting (from: Mon 2pm to: 4pm)
+   [E][ ] project meeting (from: Oct 15 2019 to: Oct 16 2019)
  Now you have 3 tasks in the list.
 ____________________________________________________________
 ____________________________________________________________
@@ -32,7 +32,7 @@ ____________________________________________________________
  Here are the tasks in your list:
  1.[T][ ] borrow book
  2.[D][ ] return book (by: Dec 02 2019)
- 3.[E][ ] project meeting (from: Mon 2pm to: 4pm)
+ 3.[E][ ] project meeting (from: Oct 15 2019 to: Oct 16 2019)
  4.[D][ ] do homework (by: Oct 15 2019)
 ____________________________________________________________
 ____________________________________________________________
@@ -43,7 +43,7 @@ ____________________________________________________________
  Here are the tasks in your list:
  1.[T][ ] borrow book
  2.[D][X] return book (by: Dec 02 2019)
- 3.[E][ ] project meeting (from: Mon 2pm to: 4pm)
+ 3.[E][ ] project meeting (from: Oct 15 2019 to: Oct 16 2019)
  4.[D][ ] do homework (by: Oct 15 2019)
 ____________________________________________________________
 ____________________________________________________________
@@ -58,12 +58,12 @@ ____________________________________________________________
  Here are the tasks in your list:
  1.[T][ ] borrow book
  2.[D][ ] return book (by: Dec 02 2019)
- 3.[E][ ] project meeting (from: Mon 2pm to: 4pm)
+ 3.[E][ ] project meeting (from: Oct 15 2019 to: Oct 16 2019)
  4.[D][X] do homework (by: Oct 15 2019)
 ____________________________________________________________
 ____________________________________________________________
  Noted. I've removed this task:
-   [E][ ] project meeting (from: Mon 2pm to: 4pm)
+   [E][ ] project meeting (from: Oct 15 2019 to: Oct 16 2019)
  Now you have 3 tasks in the list.
 ____________________________________________________________
 ____________________________________________________________
@@ -88,7 +88,7 @@ ____________________________________________________________
  A deadline needs a /by to say when it is due, as in "deadline return book /by 2019-12-02".
 ____________________________________________________________
 ____________________________________________________________
- An event needs a /to after the /from, as in "event project meeting /from Mon 2pm /to 4pm".
+ An event needs a /to after the /from, as in "event project meeting /from 2019-10-15 /to 2019-10-16".
 ____________________________________________________________
 ____________________________________________________________
  There is no task 99. Pick a number from 1 to 3.

@@ -1,3 +1,4 @@
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -241,7 +242,7 @@ public class GOAT {
      * @throws GOATException if the description, {@code /from} or {@code /to} is missing
      */
     private static Event parseEvent(String arguments) throws GOATException {
-        String example = "\"event project meeting /from Mon 2pm /to 4pm\"";
+        String example = "\"event project meeting /from 2019-10-15 /to 2019-10-16\"";
         int fromIndex = arguments.indexOf("/from");
         if (fromIndex < 0) {
             throw new GOATException("An event needs a /from to say when it starts, as in "
@@ -270,7 +271,15 @@ public class GOAT {
             throw new GOATException("The /to is empty. Tell me when it ends, as in "
                     + example + ".");
         }
-        return new Event(description, from, to);
+
+        LocalDate start = DateFormats.parse(from);
+        LocalDate end = DateFormats.parse(to);
+        if (end.isBefore(start)) {
+            throw new GOATException("An event cannot end before it starts."
+                    + " " + DateFormats.format(end) + " is earlier than "
+                    + DateFormats.format(start) + ".");
+        }
+        return new Event(description, start, end);
     }
 
     /**
