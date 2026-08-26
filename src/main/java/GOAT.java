@@ -90,7 +90,13 @@ public class GOAT {
         try {
             List<Task> saved = storage.load();
             tasks.addAll(saved);
-            if (!saved.isEmpty()) {
+
+            int skipped = storage.getSkippedLineCount();
+            if (skipped > 0) {
+                respond("Some of your save file was unreadable, so I skipped " + skipped
+                                + (skipped == 1 ? " line." : " lines."),
+                        "The " + saved.size() + " tasks I could read are in your list.");
+            } else if (!saved.isEmpty()) {
                 respond("Welcome back. I restored " + saved.size()
                         + (saved.size() == 1 ? " task" : " tasks") + " from your last session.");
             }
