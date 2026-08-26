@@ -1,7 +1,6 @@
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 
 /**
  * Entry point for the GOAT chatbot.
@@ -13,21 +12,8 @@ import java.util.Scanner;
  */
 public class GOAT {
 
-    /** Horizontal rule printed around each block of output. */
-    private static final String LINE =
-            "____________________________________________________________";
-
-    /** The bot's name, kept in one place so every message stays consistent. */
-    private static final String NAME = "GOAT";
-
-    /** ASCII-art banner shown once at startup. */
-    private static final String BANNER = """
-  ____   ___      _     _____
- / ___| / _ \\    / \\   |_   _|
-| |  _ | | | |  / _ \\    | |
-| |_| || |_| | / ___ \\   | |
- \\____| \\___/ /_/   \\_\\  |_|
-""";
+    /** Handles all reading from and writing to the user. */
+    private static final Ui ui = new Ui();
 
     /** Where the task list is saved between runs, relative to the working directory. */
     private static final String SAVE_FILE_PATH = "data/goat.txt";
@@ -44,17 +30,12 @@ public class GOAT {
     private static final ArrayList<Task> tasks = new ArrayList<>();
 
     public static void main(String[] args) {
-        System.out.println(BANNER);
-        greet();
+        ui.showWelcome();
         loadTasks();
 
-        Scanner scanner = new Scanner(System.in);
         boolean isRunning = true;
-
-        // hasNextLine() is false at end of input, so piped input and Ctrl-D exit cleanly
-        // instead of looping forever.
-        while (isRunning && scanner.hasNextLine()) {
-            String input = scanner.nextLine().trim();
+        while (isRunning && ui.hasNextCommand()) {
+            String input = ui.readCommand();
             String[] parts = input.split(" ", 2);
             String keyword = parts[0];
             String arguments = parts.length > 1 ? parts[1].trim() : "";
@@ -75,11 +56,11 @@ public class GOAT {
             } catch (GOATException e) {
                 // One catch for the whole loop: a rejected command reports itself and
                 // GOAT carries on with the next line instead of terminating.
-                respond(e.getMessage());
+                ui.showError(e.getMessage());
             }
         }
 
-        farewell();
+        ui.showGoodbye();
     }
 
     /**
@@ -95,29 +76,16 @@ public class GOAT {
 
             int skipped = storage.getSkippedLineCount();
             if (skipped > 0) {
-                respond("Some of your save file was unreadable, so I skipped " + skipped
+                ui.show("Some of your save file was unreadable, so I skipped " + skipped
                                 + (skipped == 1 ? " line." : " lines."),
                         "The " + saved.size() + " tasks I could read are in your list.");
             } else if (!saved.isEmpty()) {
-                respond("Welcome back. I restored " + saved.size()
+                ui.show("Welcome back. I restored " + saved.size()
                         + (saved.size() == 1 ? " task" : " tasks") + " from your last session.");
             }
         } catch (GOATException e) {
-            respond(e.getMessage());
+            ui.showError(e.getMessage());
         }
-    }
-
-    /**
-     * Prints one reply, wrapped in horizontal rules and indented.
-     *
-     * @param messages lines of the reply, printed in order
-     */
-    private static void respond(String... messages) {
-        System.out.println(LINE);
-        for (String message : messages) {
-            System.out.println(" " + message);
-        }
-        System.out.println(LINE);
     }
 
     /**
@@ -129,7 +97,7 @@ public class GOAT {
     private static void addTask(Task task) throws GOATException {
         tasks.add(task);
         storage.save(tasks);
-        respond("Got it. I've added this task:", "  " + task, taskCountSummary());
+        ui.show("Got it. I've added this task:", "  " + task, taskCountSummary());
     }
 
     /**
@@ -144,7 +112,7 @@ public class GOAT {
         // is why list renumbers them automatically.
         Task removed = tasks.remove(taskNumber - 1);
         storage.save(tasks);
-        respond("Noted. I've removed this task:", "  " + removed, taskCountSummary());
+        ui.show("Noted. I've removed this task:", "  " + removed, taskCountSummary());
     }
 
     /**
@@ -294,7 +262,7 @@ public class GOAT {
         Task task = tasks.get(index);
         task.markAsDone();
         storage.save(tasks);
-        respond("Nice! I've marked this task as done:", "  " + task);
+        ui.show("Nice! I've marked this task as done:", "  " + task);
     }
 
     /**
@@ -308,7 +276,7 @@ public class GOAT {
         Task task = tasks.get(index);
         task.markAsNotDone();
         storage.save(tasks);
-        respond("OK, I've marked this task as not done yet:", "  " + task);
+        ui.show("OK, I've marked this task as not done yet:", "  " + task);
     }
 
     /**
@@ -334,11 +302,11 @@ public class GOAT {
         }
 
         if (lines.isEmpty()) {
-            respond("Nothing is scheduled on " + DateFormats.format(date) + ".");
+            ui.show("Nothing is scheduled on " + DateFormats.format(date) + ".");
             return;
         }
         lines.add(0, "Here is what you have on " + DateFormats.format(date) + ":");
-        respond(lines.toArray(new String[0]));
+        ui.show(lines.toArray(new String[0]));
     }
 
     /**
@@ -365,16 +333,6 @@ public class GOAT {
         for (int i = 0; i < tasks.size(); i++) {
             lines[i + 1] = (i + 1) + "." + tasks.get(i);
         }
-        respond(lines);
-    }
-
-    /** Prints the opening message shown when the program starts. */
-    private static void greet() {
-        respond("Hello! I'm " + NAME, "What can I do for you?");
-    }
-
-    /** Prints the closing message shown just before the program ends. */
-    private static void farewell() {
-        respond("Bye. Hope to see you again soon!");
+        ui.show(lines);
     }
 }
