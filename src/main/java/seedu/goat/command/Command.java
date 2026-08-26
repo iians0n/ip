@@ -52,7 +52,7 @@ public enum Command {
      *
      * @return the keyword, such as {@code mark}
      */
-    public String keyword() {
+    public String getKeyword() {
         return keyword;
     }
 
