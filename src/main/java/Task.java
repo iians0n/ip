@@ -45,6 +45,25 @@ public abstract class Task {
         return isDone ? "[X]" : "[ ]";
     }
 
+    /**
+     * Returns the completion flag as it is written to the save file.
+     *
+     * @return {@code "1"} if this task is done, {@code "0"} otherwise
+     */
+    protected String getFileStatus() {
+        return isDone ? "1" : "0";
+    }
+
+    /**
+     * Returns this task encoded as a single line of the save file.
+     * <p>
+     * Declared here and implemented by each subclass so that Storage never has to test
+     * a task's runtime type to work out which fields to write.
+     *
+     * @return the encoded task, such as {@code D | 0 | return book | Sunday}
+     */
+    public abstract String toFileString();
+
     @Override
     public String toString() {
         return getStatusIcon() + " " + description;

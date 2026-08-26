@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 /**
@@ -27,6 +28,12 @@ public class GOAT {
  \\____| \\___/ /_/   \\_\\  |_|
 """;
 
+    /** Where the task list is saved between runs, relative to the working directory. */
+    private static final String SAVE_FILE_PATH = "data/goat.txt";
+
+    /** Handles reading and writing {@link #SAVE_FILE_PATH}. */
+    private static final Storage storage = new Storage(SAVE_FILE_PATH);
+
     /**
      * Stored tasks, in the order the user added them.
      * <p>
@@ -38,6 +45,7 @@ public class GOAT {
     public static void main(String[] args) {
         System.out.println(BANNER);
         greet();
+        loadTasks();
 
         Scanner scanner = new Scanner(System.in);
         boolean isRunning = true;
@@ -73,6 +81,31 @@ public class GOAT {
     }
 
     /**
+     * Restores any previously saved tasks into the in-memory list.
+     * <p>
+     * A failure here is reported and then ignored, so a bad save file leaves GOAT usable
+     * with an empty list rather than preventing it from starting at all.
+     */
+    private static void loadTasks() {
+        try {
+            List<Task> saved = storage.load();
+            tasks.addAll(saved);
+
+            int skipped = storage.getSkippedLineCount();
+            if (skipped > 0) {
+                respond("Some of your save file was unreadable, so I skipped " + skipped
+                                + (skipped == 1 ? " line." : " lines."),
+                        "The " + saved.size() + " tasks I could read are in your list.");
+            } else if (!saved.isEmpty()) {
+                respond("Welcome back. I restored " + saved.size()
+                        + (saved.size() == 1 ? " task" : " tasks") + " from your last session.");
+            }
+        } catch (GOATException e) {
+            respond(e.getMessage());
+        }
+    }
+
+    /**
      * Prints one reply, wrapped in horizontal rules and indented.
      *
      * @param messages lines of the reply, printed in order
@@ -89,9 +122,11 @@ public class GOAT {
      * Stores a new task and confirms it, along with the new task count.
      *
      * @param task the task to store
+     * @throws GOATException if the updated list cannot be saved
      */
-    private static void addTask(Task task) {
+    private static void addTask(Task task) throws GOATException {
         tasks.add(task);
+        storage.save(tasks);
         respond("Got it. I've added this task:", "  " + task, taskCountSummary());
     }
 
@@ -99,12 +134,14 @@ public class GOAT {
      * Removes a task from the list and reports what was removed.
      *
      * @param taskNumber the position shown by {@code list}, counting from 1
+     * @throws GOATException if the updated list cannot be saved
      */
-    private static void deleteTask(int taskNumber) {
+    private static void deleteTask(int taskNumber) throws GOATException {
         // remove() returns the removed element, so the confirmation can show the task
         // even though it is no longer in the list. Later tasks shift down by one, which
         // is why list renumbers them automatically.
         Task removed = tasks.remove(taskNumber - 1);
+        storage.save(tasks);
         respond("Noted. I've removed this task:", "  " + removed, taskCountSummary());
     }
 
@@ -240,11 +277,13 @@ public class GOAT {
      * Marks a task as done and echoes it back.
      *
      * @param taskNumber the position shown by {@code list}, counting from 1
+     * @throws GOATException if the updated list cannot be saved
      */
-    private static void markTask(int taskNumber) {
+    private static void markTask(int taskNumber) throws GOATException {
         int index = taskNumber - 1;
         Task task = tasks.get(index);
         task.markAsDone();
+        storage.save(tasks);
         respond("Nice! I've marked this task as done:", "  " + task);
     }
 
@@ -252,11 +291,13 @@ public class GOAT {
      * Marks a task as not done and echoes it back.
      *
      * @param taskNumber the position shown by {@code list}, counting from 1
+     * @throws GOATException if the updated list cannot be saved
      */
-    private static void unmarkTask(int taskNumber) {
+    private static void unmarkTask(int taskNumber) throws GOATException {
         int index = taskNumber - 1;
         Task task = tasks.get(index);
         task.markAsNotDone();
+        storage.save(tasks);
         respond("OK, I've marked this task as not done yet:", "  " + task);
     }
 

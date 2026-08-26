@@ -12,6 +12,9 @@ cd "$(dirname "$0")/.." || exit 1
 
 JAVA_HOME="${JAVA_HOME:-$(/usr/libexec/java_home -v 25)}"
 
+# GOAT now persists tasks, so clear any saved data first. Otherwise the previous run's
+# tasks would be loaded and the output would differ from EXPECTED.TXT.
+rm -rf data
 rm -rf out
 mkdir -p out
 if ! "$JAVA_HOME/bin/javac" -d out src/main/java/*.java; then
