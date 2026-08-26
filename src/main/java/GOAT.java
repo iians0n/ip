@@ -31,22 +31,22 @@ public class GOAT {
         boolean isRunning = true;
         while (isRunning && ui.hasNextCommand()) {
             String input = ui.readCommand();
-            String[] parts = input.split(" ", 2);
-            String keyword = parts[0];
-            String arguments = parts.length > 1 ? parts[1].trim() : "";
 
             try {
-                Command command = Command.fromKeyword(keyword);
+                Parser.ParsedCommand parsed = Parser.parse(input);
+                Command command = parsed.command();
+                String arguments = parsed.arguments();
+
                 switch (command) {
                     case BYE -> isRunning = false;
                     case LIST -> listTasks();
-                    case MARK -> markTask(parseTaskNumber(arguments, command));
-                    case UNMARK -> unmarkTask(parseTaskNumber(arguments, command));
-                    case DELETE -> deleteTask(parseTaskNumber(arguments, command));
-                    case ON -> listTasksOn(arguments);
-                    case TODO -> addTask(parseTodo(arguments));
-                    case DEADLINE -> addTask(parseDeadline(arguments));
-                    case EVENT -> addTask(parseEvent(arguments));
+                    case MARK -> markTask(Parser.parseTaskNumber(arguments, command));
+                    case UNMARK -> unmarkTask(Parser.parseTaskNumber(arguments, command));
+                    case DELETE -> deleteTask(Parser.parseTaskNumber(arguments, command));
+                    case ON -> listTasksOn(Parser.parseDate(arguments));
+                    case TODO -> addTask(Parser.parseTodo(arguments));
+                    case DEADLINE -> addTask(Parser.parseDeadline(arguments));
+                    case EVENT -> addTask(Parser.parseEvent(arguments));
                 }
             } catch (GOATException e) {
                 // One catch for the whole loop: a rejected command reports itself and
@@ -105,7 +105,7 @@ public class GOAT {
         // remove() returns the removed element, so the confirmation can show the task
         // even though it is no longer in the list. Later tasks shift down by one, which
         // is why list renumbers them automatically.
-        Task removed = tasks.delete(taskNumber - 1);
+        Task removed = tasks.delete(toIndex(taskNumber, Command.DELETE));
         storage.save(tasks.asList());
         ui.show("Noted. I've removed this task:", "  " + removed, taskCountSummary());
     }
@@ -121,129 +121,26 @@ public class GOAT {
     }
 
     /**
-     * Reads the 1-based task number given to a command such as {@code mark}.
+     * Converts a task number the user typed into a position in the list.
+     * <p>
+     * The number itself was already checked by {@link Parser}; what is checked here is
+     * whether it refers to a task that actually exists, which only the list can say.
      *
-     * @param arguments text following the command
+     * @param taskNumber the position the user typed, counting from 1
      * @param command the command being run, named in the error messages
-     * @return a task number that is known to be within range
-     * @throws GOATException if the number is missing, not a number, or out of range
+     * @return the matching zero-based index
+     * @throws GOATException if the list is empty or the number is out of range
      */
-    private static int parseTaskNumber(String arguments, Command command)
-            throws GOATException {
-        String name = command.keyword();
-        if (arguments.isEmpty()) {
-            throw new GOATException(name + " needs a task number, as in \""
-                    + name + " 2\".");
-        }
-
-        int taskNumber;
-        try {
-            taskNumber = Integer.parseInt(arguments);
-        } catch (NumberFormatException e) {
-            throw new GOATException("\"" + arguments + "\" is not a number. Give me a task"
-                    + " number instead, as in \"" + name + " 2\".");
-        }
-
+    private static int toIndex(int taskNumber, Command command) throws GOATException {
         if (tasks.isEmpty()) {
             throw new GOATException("Your list is empty, so there is nothing to "
-                    + name + " yet.");
+                    + command.keyword() + " yet.");
         }
         if (taskNumber < 1 || taskNumber > tasks.size()) {
             throw new GOATException("There is no task " + taskNumber + ". Pick a number"
                     + " from 1 to " + tasks.size() + ".");
         }
-        return taskNumber;
-    }
-
-    /**
-     * Builds a to-do from the text following the {@code todo} command.
-     *
-     * @param arguments the description
-     * @return the parsed to-do
-     * @throws GOATException if the description is missing
-     */
-    private static Todo parseTodo(String arguments) throws GOATException {
-        if (arguments.isEmpty()) {
-            throw new GOATException("A todo needs a description, as in"
-                    + " \"todo borrow book\".");
-        }
-        return new Todo(arguments);
-    }
-
-    /**
-     * Builds a deadline from the text following the {@code deadline} command.
-     *
-     * @param arguments text of the form {@code DESCRIPTION /by WHEN}
-     * @return the parsed deadline
-     * @throws GOATException if the description, the {@code /by}, or the time is missing
-     */
-    private static Deadline parseDeadline(String arguments) throws GOATException {
-        String example = "\"deadline return book /by 2019-12-02\"";
-        int byIndex = arguments.indexOf("/by");
-        if (byIndex < 0) {
-            throw new GOATException("A deadline needs a /by to say when it is due, as in "
-                    + example + ".");
-        }
-
-        String description = arguments.substring(0, byIndex).trim();
-        String by = arguments.substring(byIndex + "/by".length()).trim();
-        if (description.isEmpty()) {
-            throw new GOATException("A deadline needs a description before the /by, as in "
-                    + example + ".");
-        }
-        if (by.isEmpty()) {
-            throw new GOATException("The /by is empty. Tell me when it is due, as in "
-                    + example + ".");
-        }
-        return new Deadline(description, DateFormats.parse(by));
-    }
-
-    /**
-     * Builds an event from the text following the {@code event} command.
-     *
-     * @param arguments text of the form {@code DESCRIPTION /from START /to END}
-     * @return the parsed event
-     * @throws GOATException if the description, {@code /from} or {@code /to} is missing
-     */
-    private static Event parseEvent(String arguments) throws GOATException {
-        String example = "\"event project meeting /from 2019-10-15 /to 2019-10-16\"";
-        int fromIndex = arguments.indexOf("/from");
-        if (fromIndex < 0) {
-            throw new GOATException("An event needs a /from to say when it starts, as in "
-                    + example + ".");
-        }
-
-        // Search after /from so that a /to written before it is not mistaken for the end.
-        int toIndex = arguments.indexOf("/to", fromIndex + "/from".length());
-        if (toIndex < 0) {
-            throw new GOATException("An event needs a /to after the /from, as in "
-                    + example + ".");
-        }
-
-        String description = arguments.substring(0, fromIndex).trim();
-        String from = arguments.substring(fromIndex + "/from".length(), toIndex).trim();
-        String to = arguments.substring(toIndex + "/to".length()).trim();
-        if (description.isEmpty()) {
-            throw new GOATException("An event needs a description before the /from, as in "
-                    + example + ".");
-        }
-        if (from.isEmpty()) {
-            throw new GOATException("The /from is empty. Tell me when it starts, as in "
-                    + example + ".");
-        }
-        if (to.isEmpty()) {
-            throw new GOATException("The /to is empty. Tell me when it ends, as in "
-                    + example + ".");
-        }
-
-        LocalDate start = DateFormats.parse(from);
-        LocalDate end = DateFormats.parse(to);
-        if (end.isBefore(start)) {
-            throw new GOATException("An event cannot end before it starts."
-                    + " " + DateFormats.format(end) + " is earlier than "
-                    + DateFormats.format(start) + ".");
-        }
-        return new Event(description, start, end);
+        return taskNumber - 1;
     }
 
     /**
@@ -253,7 +150,7 @@ public class GOAT {
      * @throws GOATException if the updated list cannot be saved
      */
     private static void markTask(int taskNumber) throws GOATException {
-        int index = taskNumber - 1;
+        int index = toIndex(taskNumber, Command.MARK);
         Task task = tasks.get(index);
         task.markAsDone();
         storage.save(tasks.asList());
@@ -267,7 +164,7 @@ public class GOAT {
      * @throws GOATException if the updated list cannot be saved
      */
     private static void unmarkTask(int taskNumber) throws GOATException {
-        int index = taskNumber - 1;
+        int index = toIndex(taskNumber, Command.UNMARK);
         Task task = tasks.get(index);
         task.markAsNotDone();
         storage.save(tasks.asList());
@@ -280,15 +177,9 @@ public class GOAT {
      * A deadline matches when it is due that day; an event matches when the date lies
      * anywhere in its span. To-dos carry no date and so never match.
      *
-     * @param arguments the date to query, in {@code yyyy-mm-dd} form
-     * @throws GOATException if the date is missing or cannot be parsed
+     * @param date the date to query
      */
-    private static void listTasksOn(String arguments) throws GOATException {
-        if (arguments.isEmpty()) {
-            throw new GOATException("on needs a date, as in \"on 2019-10-15\".");
-        }
-        LocalDate date = DateFormats.parse(arguments);
-
+    private static void listTasksOn(LocalDate date) {
         List<Task> matches = tasks.findOn(date);
         List<String> lines = new ArrayList<>();
         for (Task task : matches) {
