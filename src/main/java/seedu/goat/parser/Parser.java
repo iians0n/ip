@@ -89,6 +89,21 @@ public class Parser {
     }
 
     /**
+     * Reads the keyword given to the {@code find} command.
+     *
+     * @param arguments the keyword as typed
+     * @return the keyword to search for
+     * @throws GoatException if no keyword was given
+     */
+    public static String parseKeyword(String arguments) throws GoatException {
+        if (arguments.isEmpty()) {
+            throw new GoatException("find needs something to look for, as in"
+                    + " \"find book\".");
+        }
+        return arguments;
+    }
+
+    /**
      * Builds a to-do from the text following the {@code todo} command.
      *
      * @param arguments the description

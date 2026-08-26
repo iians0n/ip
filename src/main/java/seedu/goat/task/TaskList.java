@@ -100,6 +100,25 @@ public class TaskList {
     }
 
     /**
+     * Returns the tasks whose description contains a keyword, in list order.
+     * <p>
+     * Each task decides for itself whether it matches, so this method needs no access to
+     * the description and no knowledge of the different kinds of task.
+     *
+     * @param keyword the text to look for
+     * @return the matching tasks, empty if none match
+     */
+    public List<Task> find(String keyword) {
+        List<Task> matches = new ArrayList<>();
+        for (Task task : tasks) {
+            if (task.hasKeyword(keyword)) {
+                matches.add(task);
+            }
+        }
+        return matches;
+    }
+
+    /**
      * Returns a read-only view of the tasks, for callers that only need to walk them.
      *
      * @return the tasks in list order

@@ -158,6 +158,28 @@ public class ParserTest {
     }
 
     @Test
+    public void parseKeyword_keywordGiven_keywordReturned() throws GoatException {
+        assertEquals("book", Parser.parseKeyword("book"));
+    }
+
+    @Test
+    public void parseKeyword_severalWords_keptTogether() throws GoatException {
+        assertEquals("project meeting", Parser.parseKeyword("project meeting"));
+    }
+
+    @Test
+    public void parseKeyword_missingKeyword_exceptionThrown() {
+        assertThrows(GoatException.class, () -> Parser.parseKeyword(""));
+    }
+
+    @Test
+    public void parse_findCommand_recognised() throws GoatException {
+        Parser.ParsedCommand parsed = Parser.parse("find book");
+        assertEquals(Command.FIND, parsed.command());
+        assertEquals("book", parsed.arguments());
+    }
+
+    @Test
     public void parseDate_validDate_dateReturned() throws GoatException {
         assertEquals("Oct 15 2019",
                 seedu.goat.DateFormats.format(Parser.parseDate("2019-10-15")));

@@ -18,6 +18,7 @@ public enum Command {
     UNMARK("unmark"),
     DELETE("delete"),
     ON("on"),
+    FIND("find"),
     BYE("bye");
 
     /** The word the user types to invoke this command. */
