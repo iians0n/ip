@@ -15,68 +15,68 @@ ____________________________________________________________
 ____________________________________________________________
 ____________________________________________________________
  Got it. I've added this task:
-   [D][ ] return book (by: Sunday)
+   [D][ ] return book (by: Dec 02 2019)
  Now you have 2 tasks in the list.
 ____________________________________________________________
 ____________________________________________________________
  Got it. I've added this task:
-   [E][ ] project meeting (from: Mon 2pm to: 4pm)
+   [E][ ] project meeting (from: Oct 15 2019 to: Oct 16 2019)
  Now you have 3 tasks in the list.
 ____________________________________________________________
 ____________________________________________________________
  Got it. I've added this task:
-   [D][ ] do homework (by: no idea :-p)
+   [D][ ] do homework (by: Oct 15 2019)
  Now you have 4 tasks in the list.
 ____________________________________________________________
 ____________________________________________________________
  Here are the tasks in your list:
  1.[T][ ] borrow book
- 2.[D][ ] return book (by: Sunday)
- 3.[E][ ] project meeting (from: Mon 2pm to: 4pm)
- 4.[D][ ] do homework (by: no idea :-p)
+ 2.[D][ ] return book (by: Dec 02 2019)
+ 3.[E][ ] project meeting (from: Oct 15 2019 to: Oct 16 2019)
+ 4.[D][ ] do homework (by: Oct 15 2019)
 ____________________________________________________________
 ____________________________________________________________
  Nice! I've marked this task as done:
-   [D][X] return book (by: Sunday)
+   [D][X] return book (by: Dec 02 2019)
 ____________________________________________________________
 ____________________________________________________________
  Here are the tasks in your list:
  1.[T][ ] borrow book
- 2.[D][X] return book (by: Sunday)
- 3.[E][ ] project meeting (from: Mon 2pm to: 4pm)
- 4.[D][ ] do homework (by: no idea :-p)
+ 2.[D][X] return book (by: Dec 02 2019)
+ 3.[E][ ] project meeting (from: Oct 15 2019 to: Oct 16 2019)
+ 4.[D][ ] do homework (by: Oct 15 2019)
 ____________________________________________________________
 ____________________________________________________________
  OK, I've marked this task as not done yet:
-   [D][ ] return book (by: Sunday)
+   [D][ ] return book (by: Dec 02 2019)
 ____________________________________________________________
 ____________________________________________________________
  Nice! I've marked this task as done:
-   [D][X] do homework (by: no idea :-p)
+   [D][X] do homework (by: Oct 15 2019)
 ____________________________________________________________
 ____________________________________________________________
  Here are the tasks in your list:
  1.[T][ ] borrow book
- 2.[D][ ] return book (by: Sunday)
- 3.[E][ ] project meeting (from: Mon 2pm to: 4pm)
- 4.[D][X] do homework (by: no idea :-p)
+ 2.[D][ ] return book (by: Dec 02 2019)
+ 3.[E][ ] project meeting (from: Oct 15 2019 to: Oct 16 2019)
+ 4.[D][X] do homework (by: Oct 15 2019)
 ____________________________________________________________
 ____________________________________________________________
  Noted. I've removed this task:
-   [E][ ] project meeting (from: Mon 2pm to: 4pm)
+   [E][ ] project meeting (from: Oct 15 2019 to: Oct 16 2019)
  Now you have 3 tasks in the list.
 ____________________________________________________________
 ____________________________________________________________
  Here are the tasks in your list:
  1.[T][ ] borrow book
- 2.[D][ ] return book (by: Sunday)
- 3.[D][X] do homework (by: no idea :-p)
+ 2.[D][ ] return book (by: Dec 02 2019)
+ 3.[D][X] do homework (by: Oct 15 2019)
 ____________________________________________________________
 ____________________________________________________________
  A todo needs a description, as in "todo borrow book".
 ____________________________________________________________
 ____________________________________________________________
- I do not know the command "blah". I know: todo, deadline, event, list, mark, unmark, delete, bye.
+ I do not know the command "blah". I know: todo, deadline, event, list, mark, unmark, delete, on, bye.
 ____________________________________________________________
 ____________________________________________________________
  There is no task 99. Pick a number from 1 to 3.
@@ -85,13 +85,26 @@ ____________________________________________________________
  "abc" is not a number. Give me a task number instead, as in "mark 2".
 ____________________________________________________________
 ____________________________________________________________
- A deadline needs a /by to say when it is due, as in "deadline return book /by Sunday".
+ A deadline needs a /by to say when it is due, as in "deadline return book /by 2019-12-02".
 ____________________________________________________________
 ____________________________________________________________
- An event needs a /to after the /from, as in "event project meeting /from Mon 2pm /to 4pm".
+ An event needs a /to after the /from, as in "event project meeting /from 2019-10-15 /to 2019-10-16".
 ____________________________________________________________
 ____________________________________________________________
  There is no task 99. Pick a number from 1 to 3.
+____________________________________________________________
+____________________________________________________________
+ Here is what you have on Oct 15 2019:
+ 1.[D][X] do homework (by: Oct 15 2019)
+____________________________________________________________
+____________________________________________________________
+ Nothing is scheduled on Jan 01 2001.
+____________________________________________________________
+____________________________________________________________
+ on needs a date, as in "on 2019-10-15".
+____________________________________________________________
+____________________________________________________________
+ I could not read "notadate" as a date. Please use yyyy-mm-dd, as in 2019-10-15.
 ____________________________________________________________
 ____________________________________________________________
  Bye. Hope to see you again soon!

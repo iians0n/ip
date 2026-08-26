@@ -1,7 +1,7 @@
 todo borrow book
-deadline return book /by Sunday
-event project meeting /from Mon 2pm /to 4pm
-deadline do homework /by no idea :-p
+deadline return book /by 2019-12-02
+event project meeting /from 2019-10-15 /to 2019-10-16
+deadline do homework /by 2019-10-15
 list
 mark 2
 list
@@ -15,6 +15,10 @@ blah
 mark 99
 mark abc
 deadline x
-event y /from Mon
+event y /from 2019-10-15
 delete 99
+on 2019-10-15
+on 2001-01-01
+on
+on notadate
 bye

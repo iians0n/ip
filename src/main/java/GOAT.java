@@ -1,3 +1,4 @@
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -66,6 +67,7 @@ public class GOAT {
                     case MARK -> markTask(parseTaskNumber(arguments, command));
                     case UNMARK -> unmarkTask(parseTaskNumber(arguments, command));
                     case DELETE -> deleteTask(parseTaskNumber(arguments, command));
+                    case ON -> listTasksOn(arguments);
                     case TODO -> addTask(parseTodo(arguments));
                     case DEADLINE -> addTask(parseDeadline(arguments));
                     case EVENT -> addTask(parseEvent(arguments));
@@ -213,7 +215,7 @@ public class GOAT {
      * @throws GOATException if the description, the {@code /by}, or the time is missing
      */
     private static Deadline parseDeadline(String arguments) throws GOATException {
-        String example = "\"deadline return book /by Sunday\"";
+        String example = "\"deadline return book /by 2019-12-02\"";
         int byIndex = arguments.indexOf("/by");
         if (byIndex < 0) {
             throw new GOATException("A deadline needs a /by to say when it is due, as in "
@@ -230,7 +232,7 @@ public class GOAT {
             throw new GOATException("The /by is empty. Tell me when it is due, as in "
                     + example + ".");
         }
-        return new Deadline(description, by);
+        return new Deadline(description, DateFormats.parse(by));
     }
 
     /**
@@ -241,7 +243,7 @@ public class GOAT {
      * @throws GOATException if the description, {@code /from} or {@code /to} is missing
      */
     private static Event parseEvent(String arguments) throws GOATException {
-        String example = "\"event project meeting /from Mon 2pm /to 4pm\"";
+        String example = "\"event project meeting /from 2019-10-15 /to 2019-10-16\"";
         int fromIndex = arguments.indexOf("/from");
         if (fromIndex < 0) {
             throw new GOATException("An event needs a /from to say when it starts, as in "
@@ -270,7 +272,15 @@ public class GOAT {
             throw new GOATException("The /to is empty. Tell me when it ends, as in "
                     + example + ".");
         }
-        return new Event(description, from, to);
+
+        LocalDate start = DateFormats.parse(from);
+        LocalDate end = DateFormats.parse(to);
+        if (end.isBefore(start)) {
+            throw new GOATException("An event cannot end before it starts."
+                    + " " + DateFormats.format(end) + " is earlier than "
+                    + DateFormats.format(start) + ".");
+        }
+        return new Event(description, start, end);
     }
 
     /**
@@ -299,6 +309,53 @@ public class GOAT {
         task.markAsNotDone();
         storage.save(tasks);
         respond("OK, I've marked this task as not done yet:", "  " + task);
+    }
+
+    /**
+     * Prints the dated tasks that fall on a given date.
+     * <p>
+     * A deadline matches when it is due that day; an event matches when the date lies
+     * anywhere in its span. To-dos carry no date and so never match.
+     *
+     * @param arguments the date to query, in {@code yyyy-mm-dd} form
+     * @throws GOATException if the date is missing or cannot be parsed
+     */
+    private static void listTasksOn(String arguments) throws GOATException {
+        if (arguments.isEmpty()) {
+            throw new GOATException("on needs a date, as in \"on 2019-10-15\".");
+        }
+        LocalDate date = DateFormats.parse(arguments);
+
+        List<String> lines = new ArrayList<>();
+        for (Task task : tasks) {
+            if (fallsOn(task, date)) {
+                lines.add((lines.size() + 1) + "." + task);
+            }
+        }
+
+        if (lines.isEmpty()) {
+            respond("Nothing is scheduled on " + DateFormats.format(date) + ".");
+            return;
+        }
+        lines.add(0, "Here is what you have on " + DateFormats.format(date) + ":");
+        respond(lines.toArray(new String[0]));
+    }
+
+    /**
+     * Returns whether a task is dated and falls on the given date.
+     *
+     * @param task the task to test
+     * @param date the date being queried
+     * @return true if the task falls on that date
+     */
+    private static boolean fallsOn(Task task, LocalDate date) {
+        if (task instanceof Deadline deadline) {
+            return deadline.getBy().equals(date);
+        }
+        if (task instanceof Event event) {
+            return event.occursOn(date);
+        }
+        return false;
     }
 
     /** Prints every stored task, numbered from 1, with its completion status. */

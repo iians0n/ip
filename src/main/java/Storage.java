@@ -102,11 +102,12 @@ public class Storage {
             case "T" -> new Todo(description);
             case "D" -> {
                 requireFieldCount(parts, 4);
-                yield new Deadline(description, parts[3]);
+                yield new Deadline(description, DateFormats.parse(parts[3]));
             }
             case "E" -> {
                 requireFieldCount(parts, 5);
-                yield new Event(description, parts[3], parts[4]);
+                yield new Event(description, DateFormats.parse(parts[3]),
+                        DateFormats.parse(parts[4]));
             }
             // Without this the decoder would guess, and an unrecognised letter would be
             // silently turned into some other kind of task.
