@@ -10,14 +10,31 @@ import seedu.goat.GoatException;
  * silently never matching the way a misspelled string literal would.
  */
 public enum Command {
+    /** Adds a task carrying no date. */
     TODO("todo"),
+
+    /** Adds a task due on a given date. */
     DEADLINE("deadline"),
+
+    /** Adds a task spanning a period between two dates. */
     EVENT("event"),
+
+    /** Shows every task, numbered, with its status. */
     LIST("list"),
+
+    /** Marks a task as done. */
     MARK("mark"),
+
+    /** Marks a task as not done. */
     UNMARK("unmark"),
+
+    /** Removes a task from the list. */
     DELETE("delete"),
+
+    /** Shows the dated tasks falling on a given date. */
     ON("on"),
+
+    /** Ends the conversation. */
     BYE("bye");
 
     /** The word the user types to invoke this command. */
