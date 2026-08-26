@@ -1,3 +1,5 @@
+import java.time.LocalDate;
+
 /**
  * A single item on the user's task list.
  * <p>
@@ -43,6 +45,19 @@ public abstract class Task {
      */
     public String getStatusIcon() {
         return isDone ? "[X]" : "[ ]";
+    }
+
+    /**
+     * Returns whether this task falls on a given date.
+     * <p>
+     * A plain task carries no date, so the base answer is no. Subclasses that do carry
+     * dates override this, which keeps callers from having to test a task's type.
+     *
+     * @param date the date being asked about
+     * @return true if this task falls on that date
+     */
+    public boolean occursOn(LocalDate date) {
+        return false;
     }
 
     /**

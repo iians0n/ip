@@ -30,6 +30,11 @@ public class Deadline extends Task {
     }
 
     @Override
+    public boolean occursOn(LocalDate date) {
+        return by.equals(date);
+    }
+
+    @Override
     public String toFileString() {
         // LocalDate.toString() is the ISO form, which is exactly what parse() reads back.
         return "D | " + getFileStatus() + " | " + description + " | " + by;

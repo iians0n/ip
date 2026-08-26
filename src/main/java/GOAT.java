@@ -21,13 +21,8 @@ public class GOAT {
     /** Handles reading and writing {@link #SAVE_FILE_PATH}. */
     private static final Storage storage = new Storage(SAVE_FILE_PATH);
 
-    /**
-     * Stored tasks, in the order the user added them.
-     * <p>
-     * An {@link ArrayList} grows on demand, so it replaces both the fixed array and the
-     * separate counter that tracked how much of that array was in use.
-     */
-    private static final ArrayList<Task> tasks = new ArrayList<>();
+    /** The tasks the user is tracking. Replaced wholesale when a save file is loaded. */
+    private static TaskList tasks = new TaskList();
 
     public static void main(String[] args) {
         ui.showWelcome();
@@ -72,7 +67,7 @@ public class GOAT {
     private static void loadTasks() {
         try {
             List<Task> saved = storage.load();
-            tasks.addAll(saved);
+            tasks = new TaskList(saved);
 
             int skipped = storage.getSkippedLineCount();
             if (skipped > 0) {
@@ -96,7 +91,7 @@ public class GOAT {
      */
     private static void addTask(Task task) throws GOATException {
         tasks.add(task);
-        storage.save(tasks);
+        storage.save(tasks.asList());
         ui.show("Got it. I've added this task:", "  " + task, taskCountSummary());
     }
 
@@ -110,8 +105,8 @@ public class GOAT {
         // remove() returns the removed element, so the confirmation can show the task
         // even though it is no longer in the list. Later tasks shift down by one, which
         // is why list renumbers them automatically.
-        Task removed = tasks.remove(taskNumber - 1);
-        storage.save(tasks);
+        Task removed = tasks.delete(taskNumber - 1);
+        storage.save(tasks.asList());
         ui.show("Noted. I've removed this task:", "  " + removed, taskCountSummary());
     }
 
@@ -261,7 +256,7 @@ public class GOAT {
         int index = taskNumber - 1;
         Task task = tasks.get(index);
         task.markAsDone();
-        storage.save(tasks);
+        storage.save(tasks.asList());
         ui.show("Nice! I've marked this task as done:", "  " + task);
     }
 
@@ -275,7 +270,7 @@ public class GOAT {
         int index = taskNumber - 1;
         Task task = tasks.get(index);
         task.markAsNotDone();
-        storage.save(tasks);
+        storage.save(tasks.asList());
         ui.show("OK, I've marked this task as not done yet:", "  " + task);
     }
 
@@ -294,11 +289,10 @@ public class GOAT {
         }
         LocalDate date = DateFormats.parse(arguments);
 
+        List<Task> matches = tasks.findOn(date);
         List<String> lines = new ArrayList<>();
-        for (Task task : tasks) {
-            if (fallsOn(task, date)) {
-                lines.add((lines.size() + 1) + "." + task);
-            }
+        for (Task task : matches) {
+            lines.add((lines.size() + 1) + "." + task);
         }
 
         if (lines.isEmpty()) {
@@ -307,23 +301,6 @@ public class GOAT {
         }
         lines.add(0, "Here is what you have on " + DateFormats.format(date) + ":");
         ui.show(lines.toArray(new String[0]));
-    }
-
-    /**
-     * Returns whether a task is dated and falls on the given date.
-     *
-     * @param task the task to test
-     * @param date the date being queried
-     * @return true if the task falls on that date
-     */
-    private static boolean fallsOn(Task task, LocalDate date) {
-        if (task instanceof Deadline deadline) {
-            return deadline.getBy().equals(date);
-        }
-        if (task instanceof Event event) {
-            return event.occursOn(date);
-        }
-        return false;
     }
 
     /** Prints every stored task, numbered from 1, with its completion status. */
