@@ -92,7 +92,7 @@ public class TaskList {
     public List<Task> findOn(LocalDate date) {
         List<Task> matches = new ArrayList<>();
         for (Task task : tasks) {
-            if (task.occursOn(date)) {
+            if (task.isOn(date)) {
                 matches.add(task);
             }
         }

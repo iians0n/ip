@@ -173,7 +173,7 @@ public class Goat {
     private int toIndex(int taskNumber, Command command) throws GoatException {
         if (tasks.isEmpty()) {
             throw new GoatException("Your list is empty, so there is nothing to "
-                    + command.keyword() + " yet.");
+                    + command.getKeyword() + " yet.");
         }
         if (taskNumber < 1 || taskNumber > tasks.size()) {
             throw new GoatException("There is no task " + taskNumber + ". Pick a number"

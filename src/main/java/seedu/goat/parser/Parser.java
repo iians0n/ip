@@ -60,7 +60,7 @@ public class Parser {
      */
     public static int parseTaskNumber(String arguments, Command command)
             throws GoatException {
-        String name = command.keyword();
+        String name = command.getKeyword();
         if (arguments.isEmpty()) {
             throw new GoatException(name + " needs a task number, as in \""
                     + name + " 2\".");

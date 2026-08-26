@@ -58,7 +58,7 @@ public abstract class Task {
      * @param date the date being asked about
      * @return true if this task falls on that date
      */
-    public boolean occursOn(LocalDate date) {
+    public boolean isOn(LocalDate date) {
         return false;
     }
 
