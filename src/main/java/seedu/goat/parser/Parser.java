@@ -1,4 +1,13 @@
+package seedu.goat.parser;
+
 import java.time.LocalDate;
+
+import seedu.goat.DateFormats;
+import seedu.goat.GoatException;
+import seedu.goat.command.Command;
+import seedu.goat.task.Deadline;
+import seedu.goat.task.Event;
+import seedu.goat.task.Todo;
 
 /**
  * Turns the raw text the user typed into the pieces the rest of GOAT works with.
@@ -28,9 +37,9 @@ public class Parser {
      *
      * @param input one line as typed, already trimmed
      * @return the command and its arguments
-     * @throws GOATException if the first word matches no known command
+     * @throws GoatException if the first word matches no known command
      */
-    public static ParsedCommand parse(String input) throws GOATException {
+    public static ParsedCommand parse(String input) throws GoatException {
         // Split on the first space only, so arguments keep any spaces of their own.
         String[] parts = input.split(" ", 2);
         String keyword = parts[0];
@@ -47,20 +56,20 @@ public class Parser {
      * @param arguments text following the command
      * @param command the command being run, named in the error messages
      * @return the number the user typed, counting from 1
-     * @throws GOATException if the number is missing or is not a number
+     * @throws GoatException if the number is missing or is not a number
      */
     public static int parseTaskNumber(String arguments, Command command)
-            throws GOATException {
+            throws GoatException {
         String name = command.keyword();
         if (arguments.isEmpty()) {
-            throw new GOATException(name + " needs a task number, as in \""
+            throw new GoatException(name + " needs a task number, as in \""
                     + name + " 2\".");
         }
 
         try {
             return Integer.parseInt(arguments);
         } catch (NumberFormatException e) {
-            throw new GOATException("\"" + arguments + "\" is not a number. Give me a task"
+            throw new GoatException("\"" + arguments + "\" is not a number. Give me a task"
                     + " number instead, as in \"" + name + " 2\".");
         }
     }
@@ -70,11 +79,11 @@ public class Parser {
      *
      * @param arguments the date as typed
      * @return the parsed date
-     * @throws GOATException if the date is missing or cannot be read
+     * @throws GoatException if the date is missing or cannot be read
      */
-    public static LocalDate parseDate(String arguments) throws GOATException {
+    public static LocalDate parseDate(String arguments) throws GoatException {
         if (arguments.isEmpty()) {
-            throw new GOATException("on needs a date, as in \"on 2019-10-15\".");
+            throw new GoatException("on needs a date, as in \"on 2019-10-15\".");
         }
         return DateFormats.parse(arguments);
     }
@@ -84,11 +93,11 @@ public class Parser {
      *
      * @param arguments the description
      * @return the parsed to-do
-     * @throws GOATException if the description is missing
+     * @throws GoatException if the description is missing
      */
-    public static Todo parseTodo(String arguments) throws GOATException {
+    public static Todo parseTodo(String arguments) throws GoatException {
         if (arguments.isEmpty()) {
-            throw new GOATException("A todo needs a description, as in"
+            throw new GoatException("A todo needs a description, as in"
                     + " \"todo borrow book\".");
         }
         return new Todo(arguments);
@@ -99,24 +108,24 @@ public class Parser {
      *
      * @param arguments text of the form {@code DESCRIPTION /by WHEN}
      * @return the parsed deadline
-     * @throws GOATException if the description, the {@code /by}, or the date is missing
+     * @throws GoatException if the description, the {@code /by}, or the date is missing
      */
-    public static Deadline parseDeadline(String arguments) throws GOATException {
+    public static Deadline parseDeadline(String arguments) throws GoatException {
         String example = "\"deadline return book /by 2019-12-02\"";
         int byIndex = arguments.indexOf("/by");
         if (byIndex < 0) {
-            throw new GOATException("A deadline needs a /by to say when it is due, as in "
+            throw new GoatException("A deadline needs a /by to say when it is due, as in "
                     + example + ".");
         }
 
         String description = arguments.substring(0, byIndex).trim();
         String by = arguments.substring(byIndex + "/by".length()).trim();
         if (description.isEmpty()) {
-            throw new GOATException("A deadline needs a description before the /by, as in "
+            throw new GoatException("A deadline needs a description before the /by, as in "
                     + example + ".");
         }
         if (by.isEmpty()) {
-            throw new GOATException("The /by is empty. Tell me when it is due, as in "
+            throw new GoatException("The /by is empty. Tell me when it is due, as in "
                     + example + ".");
         }
         return new Deadline(description, DateFormats.parse(by));
@@ -127,20 +136,20 @@ public class Parser {
      *
      * @param arguments text of the form {@code DESCRIPTION /from START /to END}
      * @return the parsed event
-     * @throws GOATException if a part is missing, unreadable, or the dates are reversed
+     * @throws GoatException if a part is missing, unreadable, or the dates are reversed
      */
-    public static Event parseEvent(String arguments) throws GOATException {
+    public static Event parseEvent(String arguments) throws GoatException {
         String example = "\"event project meeting /from 2019-10-15 /to 2019-10-16\"";
         int fromIndex = arguments.indexOf("/from");
         if (fromIndex < 0) {
-            throw new GOATException("An event needs a /from to say when it starts, as in "
+            throw new GoatException("An event needs a /from to say when it starts, as in "
                     + example + ".");
         }
 
         // Search after /from so that a /to written before it is not mistaken for the end.
         int toIndex = arguments.indexOf("/to", fromIndex + "/from".length());
         if (toIndex < 0) {
-            throw new GOATException("An event needs a /to after the /from, as in "
+            throw new GoatException("An event needs a /to after the /from, as in "
                     + example + ".");
         }
 
@@ -148,22 +157,22 @@ public class Parser {
         String from = arguments.substring(fromIndex + "/from".length(), toIndex).trim();
         String to = arguments.substring(toIndex + "/to".length()).trim();
         if (description.isEmpty()) {
-            throw new GOATException("An event needs a description before the /from, as in "
+            throw new GoatException("An event needs a description before the /from, as in "
                     + example + ".");
         }
         if (from.isEmpty()) {
-            throw new GOATException("The /from is empty. Tell me when it starts, as in "
+            throw new GoatException("The /from is empty. Tell me when it starts, as in "
                     + example + ".");
         }
         if (to.isEmpty()) {
-            throw new GOATException("The /to is empty. Tell me when it ends, as in "
+            throw new GoatException("The /to is empty. Tell me when it ends, as in "
                     + example + ".");
         }
 
         LocalDate start = DateFormats.parse(from);
         LocalDate end = DateFormats.parse(to);
         if (end.isBefore(start)) {
-            throw new GOATException("An event cannot end before it starts."
+            throw new GoatException("An event cannot end before it starts."
                     + " " + DateFormats.format(end) + " is earlier than "
                     + DateFormats.format(start) + ".");
         }

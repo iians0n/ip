@@ -1,3 +1,5 @@
+package seedu.goat;
+
 /**
  * Signals input that GOAT understands enough to reject politely.
  * <p>
@@ -5,14 +7,14 @@
  * every command handler to declare it, which makes the error paths visible in the code.
  * The message carried here is written for the user and is printed verbatim.
  */
-public class GOATException extends Exception {
+public class GoatException extends Exception {
 
     /**
      * Creates an exception whose message is shown directly to the user.
      *
      * @param message what went wrong, phrased as advice rather than as a stack trace
      */
-    public GOATException(String message) {
+    public GoatException(String message) {
         super(message);
     }
 }

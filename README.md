@@ -44,8 +44,8 @@ java -version
 ## Running from the command line
 
 ```bash
-javac -d out src/main/java/*.java
-java -cp out GOAT
+javac -d out $(find src/main/java -name "*.java")
+java -cp out seedu.goat.Goat
 ```
 
 ## Running the tests
@@ -66,7 +66,10 @@ baseline with `./text-ui-test/runtest.sh --bless`.
 extension at your JDK 25 installation.
 
 **IntelliJ:** open the project, set the SDK to **JDK 25** and the **Project language
-level** to `SDK default`, then run `src/main/java/GOAT.java`.
+level** to `SDK default`, then run `src/main/java/seedu/goat/Goat.java`.
+
+Classes are organised under `src/main/java/seedu/goat`, split into `command`,
+`parser`, `storage`, `task` and `ui` subpackages.
 
 **Warning:** keep `src/main/java` as the root folder for Java files. Do not rename those
 folders or move Java files outside that path, as tools such as Gradle expect to find them

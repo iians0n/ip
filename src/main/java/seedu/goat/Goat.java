@@ -1,6 +1,15 @@
+package seedu.goat;
+
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+
+import seedu.goat.command.Command;
+import seedu.goat.parser.Parser;
+import seedu.goat.storage.Storage;
+import seedu.goat.task.Task;
+import seedu.goat.task.TaskList;
+import seedu.goat.ui.Ui;
 
 /**
  * Entry point for the GOAT chatbot.
@@ -10,7 +19,7 @@ import java.util.List;
  * change their status, {@code delete} removes one, {@code list} prints them and
  * {@code bye} ends the conversation.
  */
-public class GOAT {
+public class Goat {
 
     /** Where the task list is saved when no other path is given. */
     private static final String DEFAULT_SAVE_PATH = "data/goat.txt";
@@ -40,12 +49,12 @@ public class GOAT {
      *
      * @param filePath relative path to the save file
      */
-    public GOAT(String filePath) {
+    public Goat(String filePath) {
         this.ui = new Ui();
         this.storage = new Storage(filePath);
         try {
             this.tasks = new TaskList(storage.load());
-        } catch (GOATException e) {
+        } catch (GoatException e) {
             this.loadingError = e.getMessage();
             this.tasks = new TaskList();
         }
@@ -76,7 +85,7 @@ public class GOAT {
                     case DEADLINE -> addTask(Parser.parseDeadline(arguments));
                     case EVENT -> addTask(Parser.parseEvent(arguments));
                 }
-            } catch (GOATException e) {
+            } catch (GoatException e) {
                 // One catch for the whole loop: a rejected command reports itself and
                 // GOAT carries on with the next line instead of terminating.
                 ui.showError(e.getMessage());
@@ -92,7 +101,7 @@ public class GOAT {
      * @param args ignored
      */
     public static void main(String[] args) {
-        new GOAT(DEFAULT_SAVE_PATH).run();
+        new Goat(DEFAULT_SAVE_PATH).run();
     }
 
     /** Tells the user what happened when the save file was read, if anything notable. */
@@ -117,9 +126,9 @@ public class GOAT {
      * Stores a new task and confirms it, along with the new task count.
      *
      * @param task the task to store
-     * @throws GOATException if the updated list cannot be saved
+     * @throws GoatException if the updated list cannot be saved
      */
-    private void addTask(Task task) throws GOATException {
+    private void addTask(Task task) throws GoatException {
         tasks.add(task);
         storage.save(tasks.asList());
         ui.show("Got it. I've added this task:", "  " + task, taskCountSummary());
@@ -129,9 +138,9 @@ public class GOAT {
      * Removes a task from the list and reports what was removed.
      *
      * @param taskNumber the position shown by {@code list}, counting from 1
-     * @throws GOATException if the updated list cannot be saved
+     * @throws GoatException if the updated list cannot be saved
      */
-    private void deleteTask(int taskNumber) throws GOATException {
+    private void deleteTask(int taskNumber) throws GoatException {
         // remove() returns the removed element, so the confirmation can show the task
         // even though it is no longer in the list. Later tasks shift down by one, which
         // is why list renumbers them automatically.
@@ -159,15 +168,15 @@ public class GOAT {
      * @param taskNumber the position the user typed, counting from 1
      * @param command the command being run, named in the error messages
      * @return the matching zero-based index
-     * @throws GOATException if the list is empty or the number is out of range
+     * @throws GoatException if the list is empty or the number is out of range
      */
-    private int toIndex(int taskNumber, Command command) throws GOATException {
+    private int toIndex(int taskNumber, Command command) throws GoatException {
         if (tasks.isEmpty()) {
-            throw new GOATException("Your list is empty, so there is nothing to "
+            throw new GoatException("Your list is empty, so there is nothing to "
                     + command.keyword() + " yet.");
         }
         if (taskNumber < 1 || taskNumber > tasks.size()) {
-            throw new GOATException("There is no task " + taskNumber + ". Pick a number"
+            throw new GoatException("There is no task " + taskNumber + ". Pick a number"
                     + " from 1 to " + tasks.size() + ".");
         }
         return taskNumber - 1;
@@ -177,9 +186,9 @@ public class GOAT {
      * Marks a task as done and echoes it back.
      *
      * @param taskNumber the position shown by {@code list}, counting from 1
-     * @throws GOATException if the updated list cannot be saved
+     * @throws GoatException if the updated list cannot be saved
      */
-    private void markTask(int taskNumber) throws GOATException {
+    private void markTask(int taskNumber) throws GoatException {
         int index = toIndex(taskNumber, Command.MARK);
         Task task = tasks.get(index);
         task.markAsDone();
@@ -191,9 +200,9 @@ public class GOAT {
      * Marks a task as not done and echoes it back.
      *
      * @param taskNumber the position shown by {@code list}, counting from 1
-     * @throws GOATException if the updated list cannot be saved
+     * @throws GoatException if the updated list cannot be saved
      */
-    private void unmarkTask(int taskNumber) throws GOATException {
+    private void unmarkTask(int taskNumber) throws GoatException {
         int index = toIndex(taskNumber, Command.UNMARK);
         Task task = tasks.get(index);
         task.markAsNotDone();

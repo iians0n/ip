@@ -1,4 +1,8 @@
+package seedu.goat.task;
+
 import java.time.LocalDate;
+
+import seedu.goat.DateFormats;
 
 /**
  * A task that must be finished by a stated date, such as

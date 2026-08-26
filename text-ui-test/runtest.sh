@@ -17,12 +17,12 @@ JAVA_HOME="${JAVA_HOME:-$(/usr/libexec/java_home -v 25)}"
 rm -rf data
 rm -rf out
 mkdir -p out
-if ! "$JAVA_HOME/bin/javac" -d out src/main/java/*.java; then
+if ! "$JAVA_HOME/bin/javac" -d out $(find src/main/java -name "*.java"); then
     echo "BUILD FAILURE"
     exit 1
 fi
 
-"$JAVA_HOME/bin/java" -cp out GOAT < text-ui-test/input.txt > text-ui-test/ACTUAL.TXT
+"$JAVA_HOME/bin/java" -cp out seedu.goat.Goat < text-ui-test/input.txt > text-ui-test/ACTUAL.TXT
 
 if [ "${1:-}" = "--bless" ]; then
     cp text-ui-test/ACTUAL.TXT text-ui-test/EXPECTED.TXT
