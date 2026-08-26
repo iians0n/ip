@@ -1,4 +1,8 @@
+package seedu.goat.task;
+
 import java.time.LocalDate;
+
+import seedu.goat.DateFormats;
 
 /**
  * A task that spans a period of time, such as

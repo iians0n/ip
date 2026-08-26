@@ -1,3 +1,7 @@
+package seedu.goat.command;
+
+import seedu.goat.GoatException;
+
 /**
  * The instructions GOAT understands, one constant per keyword the user can type.
  * <p>
@@ -37,9 +41,9 @@ public enum Command {
      *
      * @param keyword the first word of the user's input
      * @return the matching command
-     * @throws GOATException if the word is empty or matches no command
+     * @throws GoatException if the word is empty or matches no command
      */
-    public static Command fromKeyword(String keyword) throws GOATException {
+    public static Command fromKeyword(String keyword) throws GoatException {
         for (Command command : values()) {
             if (command.keyword.equals(keyword)) {
                 return command;
@@ -47,10 +51,10 @@ public enum Command {
         }
 
         if (keyword.isEmpty()) {
-            throw new GOATException("I did not catch a command there. I know: "
+            throw new GoatException("I did not catch a command there. I know: "
                     + keywordList() + ".");
         }
-        throw new GOATException("I do not know the command \"" + keyword + "\". I know: "
+        throw new GoatException("I do not know the command \"" + keyword + "\". I know: "
                 + keywordList() + ".");
     }
 

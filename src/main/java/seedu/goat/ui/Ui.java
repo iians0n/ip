@@ -1,3 +1,5 @@
+package seedu.goat.ui;
+
 import java.util.Scanner;
 
 /**

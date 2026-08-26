@@ -1,8 +1,17 @@
+package seedu.goat.storage;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+
+import seedu.goat.DateFormats;
+import seedu.goat.GoatException;
+import seedu.goat.task.Deadline;
+import seedu.goat.task.Event;
+import seedu.goat.task.Task;
+import seedu.goat.task.Todo;
 
 /**
  * Reads and writes the task list to a text file on disk.
@@ -36,9 +45,9 @@ public class Storage {
      * one damaged line cannot cost the user the rest of their list.
      *
      * @return the saved tasks in file order, or an empty list if there is no save file
-     * @throws GOATException if the file exists but cannot be read at all
+     * @throws GoatException if the file exists but cannot be read at all
      */
-    public List<Task> load() throws GOATException {
+    public List<Task> load() throws GoatException {
         List<Task> tasks = new ArrayList<>();
         skippedLineCount = 0;
         if (!Files.exists(filePath)) {
@@ -49,7 +58,7 @@ public class Storage {
         try {
             lines = Files.readAllLines(filePath);
         } catch (IOException e) {
-            throw new GOATException("I could not read your saved tasks from " + filePath
+            throw new GoatException("I could not read your saved tasks from " + filePath
                     + ", so I am starting with an empty list.");
         }
 
@@ -59,7 +68,7 @@ public class Storage {
             }
             try {
                 tasks.add(parseLine(line));
-            } catch (GOATException e) {
+            } catch (GoatException e) {
                 skippedLineCount++;
             }
         }
@@ -80,9 +89,9 @@ public class Storage {
      *
      * @param line a line produced by {@link Task#toFileString()}
      * @return the decoded task
-     * @throws GOATException if the line is malformed in any way
+     * @throws GoatException if the line is malformed in any way
      */
-    private static Task parseLine(String line) throws GOATException {
+    private static Task parseLine(String line) throws GoatException {
         // The separator is escaped because split() takes a regular expression, in which
         // a bare | means alternation rather than a literal bar.
         String[] parts = line.split(" \\| ");
@@ -92,10 +101,10 @@ public class Storage {
         String status = parts[1];
         String description = parts[2];
         if (!status.equals("0") && !status.equals("1")) {
-            throw new GOATException("status must be 0 or 1");
+            throw new GoatException("status must be 0 or 1");
         }
         if (description.isBlank()) {
-            throw new GOATException("description is empty");
+            throw new GoatException("description is empty");
         }
 
         Task task = switch (type) {
@@ -111,7 +120,7 @@ public class Storage {
             }
             // Without this the decoder would guess, and an unrecognised letter would be
             // silently turned into some other kind of task.
-            default -> throw new GOATException("unknown task type " + type);
+            default -> throw new GoatException("unknown task type " + type);
         };
 
         if (status.equals("1")) {
@@ -125,17 +134,17 @@ public class Storage {
      *
      * @param parts the fields split out of the line
      * @param required how many fields this kind of task needs
-     * @throws GOATException if there are too few fields, or any required one is blank
+     * @throws GoatException if there are too few fields, or any required one is blank
      */
     private static void requireFieldCount(String[] parts, int required)
-            throws GOATException {
+            throws GoatException {
         if (parts.length < required) {
-            throw new GOATException("expected " + required + " fields, found "
+            throw new GoatException("expected " + required + " fields, found "
                     + parts.length);
         }
         for (int i = 0; i < required; i++) {
             if (parts[i].isBlank()) {
-                throw new GOATException("field " + (i + 1) + " is empty");
+                throw new GoatException("field " + (i + 1) + " is empty");
             }
         }
     }
@@ -147,9 +156,9 @@ public class Storage {
      * place, and the file is small enough that the cost does not matter.
      *
      * @param tasks the tasks to save, in list order
-     * @throws GOATException if the file cannot be written
+     * @throws GoatException if the file cannot be written
      */
-    public void save(List<Task> tasks) throws GOATException {
+    public void save(List<Task> tasks) throws GoatException {
         try {
             Path parent = filePath.getParent();
             if (parent != null) {
@@ -164,7 +173,7 @@ public class Storage {
             }
             Files.write(filePath, lines);
         } catch (IOException e) {
-            throw new GOATException("I could not save your tasks to " + filePath
+            throw new GoatException("I could not save your tasks to " + filePath
                     + ". Your list is still correct in this session.");
         }
     }

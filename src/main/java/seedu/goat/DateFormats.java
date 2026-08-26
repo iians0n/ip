@@ -1,3 +1,5 @@
+package seedu.goat;
+
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
@@ -30,13 +32,13 @@ public class DateFormats {
      *
      * @param text the date as typed or as stored, such as {@code 2019-10-15}
      * @return the parsed date
-     * @throws GOATException if the text is not a valid ISO date
+     * @throws GoatException if the text is not a valid ISO date
      */
-    public static LocalDate parse(String text) throws GOATException {
+    public static LocalDate parse(String text) throws GoatException {
         try {
             return LocalDate.parse(text);
         } catch (DateTimeParseException e) {
-            throw new GOATException("I could not read \"" + text + "\" as a date."
+            throw new GoatException("I could not read \"" + text + "\" as a date."
                     + " Please use " + INPUT_FORMAT + ", as in 2019-10-15.");
         }
     }

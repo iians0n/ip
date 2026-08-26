@@ -1,3 +1,5 @@
+package seedu.goat.task;
+
 /**
  * A task with nothing but a description, such as {@code todo borrow book}.
  */
