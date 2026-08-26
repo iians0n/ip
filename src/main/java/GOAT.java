@@ -67,6 +67,7 @@ public class GOAT {
                     case MARK -> markTask(parseTaskNumber(arguments, command));
                     case UNMARK -> unmarkTask(parseTaskNumber(arguments, command));
                     case DELETE -> deleteTask(parseTaskNumber(arguments, command));
+                    case ON -> listTasksOn(arguments);
                     case TODO -> addTask(parseTodo(arguments));
                     case DEADLINE -> addTask(parseDeadline(arguments));
                     case EVENT -> addTask(parseEvent(arguments));
@@ -308,6 +309,53 @@ public class GOAT {
         task.markAsNotDone();
         storage.save(tasks);
         respond("OK, I've marked this task as not done yet:", "  " + task);
+    }
+
+    /**
+     * Prints the dated tasks that fall on a given date.
+     * <p>
+     * A deadline matches when it is due that day; an event matches when the date lies
+     * anywhere in its span. To-dos carry no date and so never match.
+     *
+     * @param arguments the date to query, in {@code yyyy-mm-dd} form
+     * @throws GOATException if the date is missing or cannot be parsed
+     */
+    private static void listTasksOn(String arguments) throws GOATException {
+        if (arguments.isEmpty()) {
+            throw new GOATException("on needs a date, as in \"on 2019-10-15\".");
+        }
+        LocalDate date = DateFormats.parse(arguments);
+
+        List<String> lines = new ArrayList<>();
+        for (Task task : tasks) {
+            if (fallsOn(task, date)) {
+                lines.add((lines.size() + 1) + "." + task);
+            }
+        }
+
+        if (lines.isEmpty()) {
+            respond("Nothing is scheduled on " + DateFormats.format(date) + ".");
+            return;
+        }
+        lines.add(0, "Here is what you have on " + DateFormats.format(date) + ":");
+        respond(lines.toArray(new String[0]));
+    }
+
+    /**
+     * Returns whether a task is dated and falls on the given date.
+     *
+     * @param task the task to test
+     * @param date the date being queried
+     * @return true if the task falls on that date
+     */
+    private static boolean fallsOn(Task task, LocalDate date) {
+        if (task instanceof Deadline deadline) {
+            return deadline.getBy().equals(date);
+        }
+        if (task instanceof Event event) {
+            return event.occursOn(date);
+        }
+        return false;
     }
 
     /** Prints every stored task, numbered from 1, with its completion status. */

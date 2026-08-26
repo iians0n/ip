@@ -17,4 +17,8 @@ mark abc
 deadline x
 event y /from 2019-10-15
 delete 99
+on 2019-10-15
+on 2001-01-01
+on
+on notadate
 bye
