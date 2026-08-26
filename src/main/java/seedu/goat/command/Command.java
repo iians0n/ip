@@ -34,6 +34,9 @@ public enum Command {
     /** Shows the dated tasks falling on a given date. */
     ON("on"),
 
+    /** Shows the tasks whose description contains a keyword. */
+    FIND("find"),
+
     /** Ends the conversation. */
     BYE("bye");
 

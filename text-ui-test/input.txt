@@ -21,4 +21,8 @@ on 2019-10-15
 on 2001-01-01
 on
 on notadate
+find book
+find BOOK
+find nothingmatches
+find
 bye

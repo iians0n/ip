@@ -73,6 +73,60 @@ public class TaskListTest {
     }
 
     @Test
+    public void find_keywordInDescription_matches() {
+        TaskList tasks = new TaskList();
+        tasks.add(new Todo("read book"));
+        tasks.add(new Todo("buy bread"));
+        assertEquals(1, tasks.find("book").size());
+    }
+
+    @Test
+    public void find_differentCase_stillMatches() {
+        TaskList tasks = new TaskList();
+        tasks.add(new Todo("Read Book"));
+        assertEquals(1, tasks.find("book").size());
+        assertEquals(1, tasks.find("BOOK").size());
+    }
+
+    @Test
+    public void find_keywordInsideAWord_matches() {
+        // A substring match is intended: searching "book" should find "bookshop".
+        TaskList tasks = new TaskList();
+        tasks.add(new Todo("visit the bookshop"));
+        assertEquals(1, tasks.find("book").size());
+    }
+
+    @Test
+    public void find_noMatch_emptyList() {
+        TaskList tasks = new TaskList();
+        tasks.add(new Todo("read book"));
+        assertTrue(tasks.find("bicycle").isEmpty());
+    }
+
+    @Test
+    public void find_matchesAcrossTaskTypes_allReturnedInListOrder() {
+        TaskList tasks = new TaskList();
+        tasks.add(new Todo("read book"));
+        tasks.add(new Deadline("return book", OCT_15));
+        tasks.add(new Todo("unrelated"));
+        tasks.add(new Event("book fair", OCT_15, OCT_15));
+
+        List<Task> found = tasks.find("book");
+        assertEquals(3, found.size());
+        assertTrue(found.get(0).toString().contains("read book"));
+        assertTrue(found.get(1).toString().contains("return book"));
+        assertTrue(found.get(2).toString().contains("book fair"));
+    }
+
+    @Test
+    public void find_keywordMatchingOnlyADate_doesNotMatch() {
+        // Only the description is searched, not the formatted date.
+        TaskList tasks = new TaskList();
+        tasks.add(new Deadline("return book", OCT_15));
+        assertTrue(tasks.find("Oct").isEmpty());
+    }
+
+    @Test
     public void delete_middleTask_removedAndLaterTasksShiftDown() {
         TaskList tasks = new TaskList();
         tasks.add(new Todo("first"));

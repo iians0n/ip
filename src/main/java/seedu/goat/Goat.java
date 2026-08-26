@@ -81,6 +81,7 @@ public class Goat {
                     case UNMARK -> unmarkTask(Parser.parseTaskNumber(arguments, command));
                     case DELETE -> deleteTask(Parser.parseTaskNumber(arguments, command));
                     case ON -> listTasksOn(Parser.parseDate(arguments));
+                    case FIND -> findTasks(Parser.parseKeyword(arguments));
                     case TODO -> addTask(Parser.parseTodo(arguments));
                     case DEADLINE -> addTask(Parser.parseDeadline(arguments));
                     case EVENT -> addTask(Parser.parseEvent(arguments));
@@ -230,6 +231,26 @@ public class Goat {
             return;
         }
         lines.add(0, "Here is what you have on " + DateFormats.format(date) + ":");
+        ui.show(lines.toArray(new String[0]));
+    }
+
+    /**
+     * Prints the tasks whose description contains a keyword.
+     *
+     * @param keyword the text the user is looking for
+     */
+    private void findTasks(String keyword) {
+        List<Task> matches = tasks.find(keyword);
+        if (matches.isEmpty()) {
+            ui.show("No task in your list mentions \"" + keyword + "\".");
+            return;
+        }
+
+        List<String> lines = new ArrayList<>();
+        lines.add("Here are the matching tasks in your list:");
+        for (Task task : matches) {
+            lines.add(lines.size() + "." + task);
+        }
         ui.show(lines.toArray(new String[0]));
     }
 

@@ -63,6 +63,19 @@ public abstract class Task {
     }
 
     /**
+     * Returns whether this task's description contains a keyword.
+     * <p>
+     * Matching is case insensitive, because a user searching for a word should not have
+     * to remember how they capitalised it when adding the task.
+     *
+     * @param keyword the text to look for
+     * @return true if the description contains the keyword
+     */
+    public boolean hasKeyword(String keyword) {
+        return description.toLowerCase().contains(keyword.toLowerCase());
+    }
+
+    /**
      * Returns the completion flag as it is written to the save file.
      *
      * @return {@code "1"} if this task is done, {@code "0"} otherwise
