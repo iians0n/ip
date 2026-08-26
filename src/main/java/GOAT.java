@@ -213,7 +213,7 @@ public class GOAT {
      * @throws GOATException if the description, the {@code /by}, or the time is missing
      */
     private static Deadline parseDeadline(String arguments) throws GOATException {
-        String example = "\"deadline return book /by Sunday\"";
+        String example = "\"deadline return book /by 2019-12-02\"";
         int byIndex = arguments.indexOf("/by");
         if (byIndex < 0) {
             throw new GOATException("A deadline needs a /by to say when it is due, as in "
@@ -230,7 +230,7 @@ public class GOAT {
             throw new GOATException("The /by is empty. Tell me when it is due, as in "
                     + example + ".");
         }
-        return new Deadline(description, by);
+        return new Deadline(description, DateFormats.parse(by));
     }
 
     /**
