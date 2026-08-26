@@ -41,6 +41,21 @@ with:
 java -version
 ```
 
+## Running with Gradle
+
+The Gradle wrapper is included, so Gradle itself does not need to be installed. The first
+run downloads it.
+
+```bash
+./gradlew run
+```
+
+To compile, run the tests and assemble everything:
+
+```bash
+./gradlew build
+```
+
 ## Running from the command line
 
 ```bash
