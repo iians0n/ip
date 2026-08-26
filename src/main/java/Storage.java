@@ -25,6 +25,58 @@ public class Storage {
     }
 
     /**
+     * Reads the saved task list from disk.
+     * <p>
+     * A missing file is not an error: it simply means this is the first run, so an empty
+     * list is returned and the file appears the first time a task is added.
+     *
+     * @return the saved tasks in file order, or an empty list if there is no save file
+     * @throws GOATException if the file exists but cannot be read
+     */
+    public ArrayList<Task> load() throws GOATException {
+        ArrayList<Task> tasks = new ArrayList<>();
+        if (!Files.exists(filePath)) {
+            return tasks;
+        }
+
+        try {
+            for (String line : Files.readAllLines(filePath)) {
+                tasks.add(parseLine(line));
+            }
+        } catch (IOException e) {
+            throw new GOATException("I could not read your saved tasks from " + filePath
+                    + ". Starting with an empty list.");
+        }
+        return tasks;
+    }
+
+    /**
+     * Rebuilds one task from its encoded line.
+     *
+     * @param line a line produced by {@link Task#toFileString()}
+     * @return the decoded task
+     */
+    private static Task parseLine(String line) {
+        // The separator is escaped because split() takes a regular expression, in which
+        // a bare | means alternation rather than a literal bar.
+        String[] parts = line.split(" \\| ");
+        String type = parts[0];
+        boolean isDone = parts[1].equals("1");
+        String description = parts[2];
+
+        Task task = switch (type) {
+            case "T" -> new Todo(description);
+            case "D" -> new Deadline(description, parts[3]);
+            default -> new Event(description, parts[3], parts[4]);
+        };
+
+        if (isDone) {
+            task.markAsDone();
+        }
+        return task;
+    }
+
+    /**
      * Writes the whole task list to disk, replacing whatever was there before.
      * <p>
      * Rewriting the entire file on every change is far simpler than editing a line in

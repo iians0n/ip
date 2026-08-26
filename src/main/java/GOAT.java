@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 /**
@@ -44,6 +45,7 @@ public class GOAT {
     public static void main(String[] args) {
         System.out.println(BANNER);
         greet();
+        loadTasks();
 
         Scanner scanner = new Scanner(System.in);
         boolean isRunning = true;
@@ -76,6 +78,25 @@ public class GOAT {
         }
 
         farewell();
+    }
+
+    /**
+     * Restores any previously saved tasks into the in-memory list.
+     * <p>
+     * A failure here is reported and then ignored, so a bad save file leaves GOAT usable
+     * with an empty list rather than preventing it from starting at all.
+     */
+    private static void loadTasks() {
+        try {
+            List<Task> saved = storage.load();
+            tasks.addAll(saved);
+            if (!saved.isEmpty()) {
+                respond("Welcome back. I restored " + saved.size()
+                        + (saved.size() == 1 ? " task" : " tasks") + " from your last session.");
+            }
+        } catch (GOATException e) {
+            respond(e.getMessage());
+        }
     }
 
     /**
