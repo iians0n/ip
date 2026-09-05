@@ -12,17 +12,24 @@ import seedu.goat.task.TaskList;
 import seedu.goat.ui.Ui;
 
 /**
- * Entry point for the GOAT chatbot.
+ * The GOAT chatbot, independent of how the user reaches it.
  * <p>
- * GOAT reads commands from standard input one line at a time. {@code todo},
- * {@code deadline} and {@code event} add tasks, {@code mark} and {@code unmark}
- * change their status, {@code delete} removes one, {@code list} prints them and
- * {@code bye} ends the conversation.
+ * Every command handler returns its reply as text instead of printing it, so one chatbot
+ * can back both the text interface driven by {@link #run()} and the JavaFX window that
+ * calls {@link #getResponse(String)}. {@code todo}, {@code deadline} and {@code event}
+ * add tasks, {@code mark} and {@code unmark} change their status, {@code delete} removes
+ * one, {@code list} shows them and {@code bye} ends the conversation.
  */
 public class Goat {
 
     /** Where the task list is saved when no other path is given. */
-    private static final String DEFAULT_SAVE_PATH = "data/goat.txt";
+    public static final String DEFAULT_SAVE_PATH = "data/goat.txt";
+
+    /** The bot's name, kept in one place so every message stays consistent. */
+    private static final String NAME = "GOAT";
+
+    /** The parting message, shown however the conversation ends. */
+    private static final String GOODBYE = "Bye. Hope to see you again soon!";
 
     /** Handles all reading from and writing to the user. */
     private final Ui ui;
@@ -36,10 +43,13 @@ public class Goat {
     /**
      * Message describing why loading failed, or null if it did not.
      * <p>
-     * Held rather than printed immediately so that the greeting still comes first: being
+     * Held rather than reported immediately so that the greeting still comes first: being
      * shown an error before GOAT has said hello reads badly.
      */
     private String loadingError;
+
+    /** Whether the user has said goodbye, which ends the conversation. */
+    private boolean isFinished;
 
     /**
      * Creates a chatbot backed by the given save file.
@@ -60,44 +70,29 @@ public class Goat {
         }
     }
 
-    /** Greets the user, then handles commands until the conversation ends. */
+    /** Greets the user, then handles typed commands until the conversation ends. */
     public void run() {
-        ui.showWelcome();
-        reportLoadOutcome();
+        ui.showBanner();
+        ui.show(getGreeting());
 
-        boolean isRunning = true;
-        while (isRunning && ui.hasNextCommand()) {
-            String input = ui.readCommand();
-
-            try {
-                Parser.ParsedCommand parsed = Parser.parse(input);
-                Command command = parsed.command();
-                String arguments = parsed.arguments();
-
-                switch (command) {
-                    case BYE -> isRunning = false;
-                    case LIST -> listTasks();
-                    case MARK -> markTask(Parser.parseTaskNumber(arguments, command));
-                    case UNMARK -> unmarkTask(Parser.parseTaskNumber(arguments, command));
-                    case DELETE -> deleteTask(Parser.parseTaskNumber(arguments, command));
-                    case ON -> listTasksOn(Parser.parseDate(arguments));
-                    case FIND -> findTasks(Parser.parseKeyword(arguments));
-                    case TODO -> addTask(Parser.parseTodo(arguments));
-                    case DEADLINE -> addTask(Parser.parseDeadline(arguments));
-                    case EVENT -> addTask(Parser.parseEvent(arguments));
-                }
-            } catch (GoatException e) {
-                // One catch for the whole loop: a rejected command reports itself and
-                // GOAT carries on with the next line instead of terminating.
-                ui.showError(e.getMessage());
-            }
+        String loadOutcome = getLoadOutcome();
+        if (!loadOutcome.isEmpty()) {
+            ui.show(loadOutcome);
         }
 
-        ui.showGoodbye();
+        while (!isFinished && ui.hasNextCommand()) {
+            ui.show(getResponse(ui.readCommand()));
+        }
+
+        if (!isFinished) {
+            // Input ran out before a bye, as happens when a file is piped in. Sign off
+            // anyway so that the transcript ends the same way either route.
+            ui.show(GOODBYE);
+        }
     }
 
     /**
-     * Starts GOAT with the default save file.
+     * Starts GOAT's text interface with the default save file.
      *
      * @param args ignored
      */
@@ -105,49 +100,112 @@ public class Goat {
         new Goat(DEFAULT_SAVE_PATH).run();
     }
 
-    /** Tells the user what happened when the save file was read, if anything notable. */
-    private void reportLoadOutcome() {
+    /**
+     * Returns the opening message.
+     *
+     * @return the greeting, as two lines
+     */
+    public String getGreeting() {
+        return String.join("\n", "Hello! I'm " + NAME, "What can I do for you?");
+    }
+
+    /**
+     * Returns what happened when the save file was read.
+     *
+     * @return the message to show, or an empty string if there is nothing worth saying
+     */
+    public String getLoadOutcome() {
         if (loadingError != null) {
-            ui.showError(loadingError);
-            return;
+            return loadingError;
         }
 
         int skipped = storage.getSkippedLineCount();
         if (skipped > 0) {
-            ui.show("Some of your save file was unreadable, so I skipped " + skipped
+            return String.join("\n",
+                    "Some of your save file was unreadable, so I skipped " + skipped
                             + (skipped == 1 ? " line." : " lines."),
                     "The " + tasks.size() + " tasks I could read are in your list.");
-        } else if (!tasks.isEmpty()) {
-            ui.show("Welcome back. I restored " + tasks.size()
-                    + (tasks.size() == 1 ? " task" : " tasks") + " from your last session.");
         }
+        if (!tasks.isEmpty()) {
+            return "Welcome back. I restored " + tasks.size()
+                    + (tasks.size() == 1 ? " task" : " tasks") + " from your last session.";
+        }
+        return "";
+    }
+
+    /**
+     * Runs one command and returns the reply.
+     * <p>
+     * Input GOAT refuses comes back as ordinary reply text rather than as an exception,
+     * because both interfaces want to show the complaint and carry on rather than stop.
+     *
+     * @param input one line as typed by the user
+     * @return the text to show in response
+     */
+    public String getResponse(String input) {
+        try {
+            Parser.ParsedCommand parsed = Parser.parse(input.trim());
+            Command command = parsed.command();
+            String arguments = parsed.arguments();
+
+            return switch (command) {
+                case BYE -> {
+                    isFinished = true;
+                    yield GOODBYE;
+                }
+                case LIST -> listTasks();
+                case MARK -> markTask(Parser.parseTaskNumber(arguments, command));
+                case UNMARK -> unmarkTask(Parser.parseTaskNumber(arguments, command));
+                case DELETE -> deleteTask(Parser.parseTaskNumber(arguments, command));
+                case ON -> listTasksOn(Parser.parseDate(arguments));
+                case FIND -> findTasks(Parser.parseKeyword(arguments));
+                case TODO -> addTask(Parser.parseTodo(arguments));
+                case DEADLINE -> addTask(Parser.parseDeadline(arguments));
+                case EVENT -> addTask(Parser.parseEvent(arguments));
+            };
+        } catch (GoatException e) {
+            return e.getMessage();
+        }
+    }
+
+    /**
+     * Returns whether the conversation has been ended by a {@code bye}.
+     *
+     * @return true once a bye has been handled
+     */
+    public boolean isFinished() {
+        return isFinished;
     }
 
     /**
      * Stores a new task and confirms it, along with the new task count.
      *
      * @param task the task to store
+     * @return the confirmation to show
      * @throws GoatException if the updated list cannot be saved
      */
-    private void addTask(Task task) throws GoatException {
+    private String addTask(Task task) throws GoatException {
         tasks.add(task);
         storage.save(tasks.asList());
-        ui.show("Got it. I've added this task:", "  " + task, taskCountSummary());
+        return String.join("\n", "Got it. I've added this task:", "  " + task,
+                taskCountSummary());
     }
 
     /**
      * Removes a task from the list and reports what was removed.
      *
      * @param taskNumber the position shown by {@code list}, counting from 1
+     * @return the confirmation to show
      * @throws GoatException if the updated list cannot be saved
      */
-    private void deleteTask(int taskNumber) throws GoatException {
-        // remove() returns the removed element, so the confirmation can show the task
+    private String deleteTask(int taskNumber) throws GoatException {
+        // delete() returns the removed element, so the confirmation can show the task
         // even though it is no longer in the list. Later tasks shift down by one, which
         // is why list renumbers them automatically.
         Task removed = tasks.delete(toIndex(taskNumber, Command.DELETE));
         storage.save(tasks.asList());
-        ui.show("Noted. I've removed this task:", "  " + removed, taskCountSummary());
+        return String.join("\n", "Noted. I've removed this task:", "  " + removed,
+                taskCountSummary());
     }
 
     /**
@@ -187,63 +245,65 @@ public class Goat {
      * Marks a task as done and echoes it back.
      *
      * @param taskNumber the position shown by {@code list}, counting from 1
+     * @return the confirmation to show
      * @throws GoatException if the updated list cannot be saved
      */
-    private void markTask(int taskNumber) throws GoatException {
+    private String markTask(int taskNumber) throws GoatException {
         int index = toIndex(taskNumber, Command.MARK);
         Task task = tasks.get(index);
         task.markAsDone();
         storage.save(tasks.asList());
-        ui.show("Nice! I've marked this task as done:", "  " + task);
+        return String.join("\n", "Nice! I've marked this task as done:", "  " + task);
     }
 
     /**
      * Marks a task as not done and echoes it back.
      *
      * @param taskNumber the position shown by {@code list}, counting from 1
+     * @return the confirmation to show
      * @throws GoatException if the updated list cannot be saved
      */
-    private void unmarkTask(int taskNumber) throws GoatException {
+    private String unmarkTask(int taskNumber) throws GoatException {
         int index = toIndex(taskNumber, Command.UNMARK);
         Task task = tasks.get(index);
         task.markAsNotDone();
         storage.save(tasks.asList());
-        ui.show("OK, I've marked this task as not done yet:", "  " + task);
+        return String.join("\n", "OK, I've marked this task as not done yet:", "  " + task);
     }
 
     /**
-     * Prints the dated tasks that fall on a given date.
+     * Lists the dated tasks that fall on a given date.
      * <p>
      * A deadline matches when it is due that day; an event matches when the date lies
      * anywhere in its span. To-dos carry no date and so never match.
      *
      * @param date the date to query
+     * @return the matching tasks, numbered, or a note that nothing is scheduled
      */
-    private void listTasksOn(LocalDate date) {
+    private String listTasksOn(LocalDate date) {
         List<Task> matches = tasks.findOn(date);
-        List<String> lines = new ArrayList<>();
-        for (Task task : matches) {
-            lines.add((lines.size() + 1) + "." + task);
+        if (matches.isEmpty()) {
+            return "Nothing is scheduled on " + DateFormats.format(date) + ".";
         }
 
-        if (lines.isEmpty()) {
-            ui.show("Nothing is scheduled on " + DateFormats.format(date) + ".");
-            return;
+        List<String> lines = new ArrayList<>();
+        lines.add("Here is what you have on " + DateFormats.format(date) + ":");
+        for (Task task : matches) {
+            lines.add(lines.size() + "." + task);
         }
-        lines.add(0, "Here is what you have on " + DateFormats.format(date) + ":");
-        ui.show(lines.toArray(new String[0]));
+        return String.join("\n", lines);
     }
 
     /**
-     * Prints the tasks whose description contains a keyword.
+     * Lists the tasks whose description contains a keyword.
      *
      * @param keyword the text the user is looking for
+     * @return the matching tasks, numbered, or a note that nothing matched
      */
-    private void findTasks(String keyword) {
+    private String findTasks(String keyword) {
         List<Task> matches = tasks.find(keyword);
         if (matches.isEmpty()) {
-            ui.show("No task in your list mentions \"" + keyword + "\".");
-            return;
+            return "No task in your list mentions \"" + keyword + "\".";
         }
 
         List<String> lines = new ArrayList<>();
@@ -251,16 +311,20 @@ public class Goat {
         for (Task task : matches) {
             lines.add(lines.size() + "." + task);
         }
-        ui.show(lines.toArray(new String[0]));
+        return String.join("\n", lines);
     }
 
-    /** Prints every stored task, numbered from 1, with its completion status. */
-    private void listTasks() {
-        String[] lines = new String[tasks.size() + 1];
-        lines[0] = "Here are the tasks in your list:";
+    /**
+     * Lists every stored task, numbered from 1, with its completion status.
+     *
+     * @return the tasks, numbered, under a heading
+     */
+    private String listTasks() {
+        List<String> lines = new ArrayList<>();
+        lines.add("Here are the tasks in your list:");
         for (int i = 0; i < tasks.size(); i++) {
-            lines[i + 1] = (i + 1) + "." + tasks.get(i);
+            lines.add((i + 1) + "." + tasks.get(i));
         }
-        ui.show(lines);
+        return String.join("\n", lines);
     }
 }

@@ -3,20 +3,17 @@ package seedu.goat.ui;
 import java.util.Scanner;
 
 /**
- * Handles everything the user sees and types.
+ * Presents the text interface: reads typed commands and prints replies.
  * <p>
- * Collecting the input stream and the output formatting here means the rest of GOAT
- * never calls {@code System.out} directly, so the wording, the indentation and the
- * horizontal rules can all change without touching the command logic.
+ * This class decides only how a reply looks, never what it says. The wording is chosen by
+ * the chatbot and handed here as text, which is what lets the same replies be shown in a
+ * window instead without any of this formatting following them there.
  */
 public class Ui {
 
     /** Horizontal rule printed around each block of output. */
     private static final String LINE =
             "____________________________________________________________";
-
-    /** The bot's name, kept in one place so every message stays consistent. */
-    private static final String NAME = "GOAT";
 
     /** ASCII-art banner shown once at startup. */
     private static final String BANNER = """
@@ -35,15 +32,9 @@ public class Ui {
         this.scanner = new Scanner(System.in);
     }
 
-    /** Prints the banner and the opening message shown when the program starts. */
-    public void showWelcome() {
+    /** Prints the banner shown once when the program starts. */
+    public void showBanner() {
         System.out.println(BANNER);
-        show("Hello! I'm " + NAME, "What can I do for you?");
-    }
-
-    /** Prints the closing message shown just before the program ends. */
-    public void showGoodbye() {
-        show("Bye. Hope to see you again soon!");
     }
 
     /**
@@ -69,23 +60,19 @@ public class Ui {
 
     /**
      * Prints one reply, wrapped in horizontal rules and indented.
+     * <p>
+     * Each message is split on its newlines so that a reply built elsewhere as a single
+     * block of text is indented line by line, rather than only on its first line.
      *
-     * @param messages lines of the reply, printed in order
+     * @param messages parts of the reply, printed in order
      */
     public void show(String... messages) {
         System.out.println(LINE);
         for (String message : messages) {
-            System.out.println(" " + message);
+            for (String line : message.split("\n", -1)) {
+                System.out.println(" " + line);
+            }
         }
         System.out.println(LINE);
-    }
-
-    /**
-     * Reports something that went wrong, in the same shape as any other reply.
-     *
-     * @param message what went wrong, phrased as advice
-     */
-    public void showError(String message) {
-        show(message);
     }
 }
