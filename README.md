@@ -8,9 +8,9 @@
  \____| \___/ /_/   \_\  |_|
 ```
 
-GOAT is a command-line chatbot that keeps track of your tasks. It is the individual
-project (iP) for CS2103/T, grown one increment at a time from the course's project
-template.
+GOAT is a chatbot that keeps track of your tasks. It runs as a JavaFX window, and the
+same commands also work in a terminal. It is the individual project (iP) for CS2103/T,
+grown one increment at a time from the course's project template.
 
 ## Features
 
@@ -23,19 +23,21 @@ template.
 | `mark N` | Marks task `N` as done | `mark 2` |
 | `unmark N` | Marks task `N` as not done | `unmark 2` |
 | `delete N` | Removes task `N` | `delete 3` |
+| `on DATE` | Shows the dated tasks falling on `DATE` | `on 2019-10-15` |
+| `find KEYWORD` | Shows the tasks whose description contains `KEYWORD` | `find book` |
 | `bye` | Ends the conversation | `bye` |
 
-Tasks are shown with a type marker and a status marker, so `[D][X] return book (by:
-Sunday)` is a completed deadline. Dates and times are kept as free text, so `/by next
-Friday` is just as valid as `/by Sunday`.
+Tasks are shown with a type marker and a status marker, so `[D][X] return book (by: Dec
+02 2019)` is a completed deadline. Dates are written as `yyyy-mm-dd`, as in `/by
+2019-12-02`, and are shown back in the friendlier `MMM dd yyyy` form.
 
 Unrecognised input is reported and the conversation continues; GOAT does not exit on bad
 commands.
 
 ## Prerequisites
 
-JDK 25. On macOS the course requires the Azul Zulu build that bundles JavaFX; check yours
-with:
+JDK 25. JavaFX comes from the Gradle build rather than from the JDK, so a plain JDK 25
+works as well as a build that bundles JavaFX. Check yours with:
 
 ```bash
 java -version
@@ -50,7 +52,7 @@ run downloads it.
 ./gradlew run
 ```
 
-To compile, run the tests and assemble everything:
+This opens the GOAT window. To compile, run the tests and assemble everything:
 
 ```bash
 ./gradlew build
@@ -71,11 +73,15 @@ java -jar goat.jar
 GOAT saves to `data/goat.txt` relative to the folder it is run from, so running the JAR
 in a new folder starts a fresh list there.
 
-## Running from the command line
+## Running the text interface
+
+The chatbot behind the window also runs in a terminal, which is how `text-ui-test`
+exercises it. Compile through Gradle so that the JavaFX dependencies are on the
+classpath, then start `Goat` rather than `Launcher`:
 
 ```bash
-javac -d out $(find src/main/java -name "*.java")
-java -cp out seedu.goat.Goat
+./gradlew compileJava
+java -cp build/classes/java/main seedu.goat.Goat
 ```
 
 ## Running the tests
@@ -96,10 +102,11 @@ baseline with `./text-ui-test/runtest.sh --bless`.
 extension at your JDK 25 installation.
 
 **IntelliJ:** open the project, set the SDK to **JDK 25** and the **Project language
-level** to `SDK default`, then run `src/main/java/seedu/goat/Goat.java`.
+level** to `SDK default`, then run `src/main/java/seedu/goat/Launcher.java`.
 
 Classes are organised under `src/main/java/seedu/goat`, split into `command`,
-`parser`, `storage`, `task` and `ui` subpackages.
+`parser`, `storage`, `task` and `ui` subpackages. The window's layout, stylesheets and
+images live alongside them in `src/main/resources`.
 
 **Warning:** keep `src/main/java` as the root folder for Java files. Do not rename those
 folders or move Java files outside that path, as tools such as Gradle expect to find them

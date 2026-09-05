@@ -1,0 +1,12 @@
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.ImageView?>
+
+<fx:root alignment="TOP_RIGHT" styleClass="dialog-box" stylesheets="@../css/dialog-box.css"
+         type="javafx.scene.layout.HBox"
+         xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
+  <children>
+    <Label fx:id="dialog" minHeight="-Infinity" text="Label" wrapText="true" />
+    <ImageView fx:id="displayPicture" fitHeight="52.0" fitWidth="52.0" styleClass="display-picture"
+               pickOnBounds="true" preserveRatio="true" />
+  </children>
+</fx:root>

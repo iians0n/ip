@@ -1,0 +1,31 @@
+.dialog-box {
+    -bubble-sent: #3d7dff;
+    -bubble-received: #ffffff;
+    -bubble-received-text: #22303f;
+
+    -fx-padding: 8 10 8 10;
+    -fx-spacing: 10;
+}
+
+/* The user's own messages. */
+.dialog-box .label {
+    -fx-background-color: -bubble-sent;
+    -fx-background-radius: 16 16 2 16;
+    -fx-text-fill: white;
+    -fx-padding: 10 14 10 14;
+    -fx-font-size: 13px;
+}
+
+/* GOAT's replies sit on the other side, so the tail corner flips with them. Task
+   listings line up only in a fixed-width font, so replies use one. */
+.dialog-box .reply-label {
+    -fx-background-color: -bubble-received;
+    -fx-background-radius: 16 16 16 2;
+    -fx-text-fill: -bubble-received-text;
+    -fx-font-family: "Menlo", "Consolas", monospace;
+    -fx-font-size: 12px;
+}
+
+.display-picture {
+    -fx-effect: dropshadow(gaussian, rgba(34, 48, 63, 0.35), 8, 0.0, 0, 3);
+}
