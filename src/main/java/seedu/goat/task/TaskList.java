@@ -17,15 +17,26 @@ public class TaskList {
     /** The tasks, in list order. Positions shown to the user are these indices plus one. */
     private final ArrayList<Task> tasks;
 
-    /** Creates an empty list. */
-    public TaskList() {
-        this.tasks = new ArrayList<>();
+    /**
+     * Creates a list holding the tasks named here, or an empty list if none are named.
+     * <p>
+     * Varargs rather than a separate no-argument constructor, because a caller that
+     * already knows its tasks can now name them in place instead of constructing an
+     * empty list and calling {@link #add(Task)} once per task. {@code new TaskList()}
+     * still reads the same and simply passes no tasks.
+     *
+     * @param tasks the tasks to start with, in order
+     */
+    public TaskList(Task... tasks) {
+        this.tasks = new ArrayList<>(List.of(tasks));
     }
 
     /**
      * Creates a list holding the given tasks.
      * <p>
-     * The tasks are copied, so later changes to this list do not disturb the caller's.
+     * Kept alongside the varargs constructor for callers such as Storage, which loads a
+     * list whose length it cannot know when the code is written. The tasks are copied,
+     * so later changes to this list do not disturb the caller's.
      *
      * @param tasks the tasks to start with, in order
      */
