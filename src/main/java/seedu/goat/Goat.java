@@ -106,7 +106,7 @@ public class Goat {
      * @return the greeting, as two lines
      */
     public String getGreeting() {
-        return String.join("\n", "Hello! I'm " + NAME, "What can I do for you?");
+        return reply("Hello! I'm " + NAME, "What can I do for you?");
     }
 
     /**
@@ -121,7 +121,7 @@ public class Goat {
 
         int skipped = storage.getSkippedLineCount();
         if (skipped > 0) {
-            return String.join("\n",
+            return reply(
                     "Some of your save file was unreadable, so I skipped " + skipped
                             + (skipped == 1 ? " line." : " lines."),
                     "The " + tasks.size() + " tasks I could read are in your list.");
@@ -178,6 +178,21 @@ public class Goat {
     }
 
     /**
+     * Joins the lines of a reply into the single block of text a reply is made of.
+     * <p>
+     * Varargs rather than an array parameter because every caller below knows its lines
+     * at the point of the call, so they can be written out in place instead of being
+     * packed into an array first. Replies whose length depends on the task list build a
+     * list and join that instead, since varargs would buy them nothing.
+     *
+     * @param replyLines the lines, in the order they should appear
+     * @return the lines separated by newlines
+     */
+    private static String reply(String... replyLines) {
+        return String.join("\n", replyLines);
+    }
+
+    /**
      * Stores a new task and confirms it, along with the new task count.
      *
      * @param task the task to store
@@ -187,8 +202,7 @@ public class Goat {
     private String addTask(Task task) throws GoatException {
         tasks.add(task);
         storage.save(tasks.asList());
-        return String.join("\n", "Got it. I've added this task:", "  " + task,
-                taskCountSummary());
+        return reply("Got it. I've added this task:", "  " + task, taskCountSummary());
     }
 
     /**
@@ -204,8 +218,7 @@ public class Goat {
         // is why list renumbers them automatically.
         Task removed = tasks.delete(toIndex(taskNumber, Command.DELETE));
         storage.save(tasks.asList());
-        return String.join("\n", "Noted. I've removed this task:", "  " + removed,
-                taskCountSummary());
+        return reply("Noted. I've removed this task:", "  " + removed, taskCountSummary());
     }
 
     /**
@@ -253,7 +266,7 @@ public class Goat {
         Task task = tasks.get(index);
         task.markAsDone();
         storage.save(tasks.asList());
-        return String.join("\n", "Nice! I've marked this task as done:", "  " + task);
+        return reply("Nice! I've marked this task as done:", "  " + task);
     }
 
     /**
@@ -268,7 +281,7 @@ public class Goat {
         Task task = tasks.get(index);
         task.markAsNotDone();
         storage.save(tasks.asList());
-        return String.join("\n", "OK, I've marked this task as not done yet:", "  " + task);
+        return reply("OK, I've marked this task as not done yet:", "  " + task);
     }
 
     /**
