@@ -105,13 +105,9 @@ public class TaskList {
      */
     public List<Task> findOn(LocalDate date) {
         assert date != null : "A date is parsed before the list is searched";
-        List<Task> matches = new ArrayList<>();
-        for (Task task : tasks) {
-            if (task.isOn(date)) {
-                matches.add(task);
-            }
-        }
-        return matches;
+        return tasks.stream()
+                .filter(task -> task.isOn(date))
+                .toList();
     }
 
     /**
@@ -125,13 +121,9 @@ public class TaskList {
      */
     public List<Task> find(String keyword) {
         assert keyword != null : "The parser rejects a missing keyword before the search";
-        List<Task> matches = new ArrayList<>();
-        for (Task task : tasks) {
-            if (task.hasKeyword(keyword)) {
-                matches.add(task);
-            }
-        }
-        return matches;
+        return tasks.stream()
+                .filter(task -> task.hasKeyword(keyword))
+                .toList();
     }
 
     /**

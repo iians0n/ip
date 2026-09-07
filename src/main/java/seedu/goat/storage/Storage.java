@@ -184,10 +184,9 @@ public class Storage {
                 Files.createDirectories(parent);
             }
 
-            List<String> lines = new ArrayList<>();
-            for (Task task : tasks) {
-                lines.add(task.toFileString());
-            }
+            List<String> lines = tasks.stream()
+                    .map(Task::toFileString)
+                    .toList();
             Files.write(filePath, lines);
         } catch (IOException e) {
             throw new GoatException("I could not save your tasks to " + filePath
