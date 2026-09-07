@@ -101,13 +101,9 @@ public class TaskList {
      * @return the matching tasks, empty if none match
      */
     public List<Task> findOn(LocalDate date) {
-        List<Task> matches = new ArrayList<>();
-        for (Task task : tasks) {
-            if (task.isOn(date)) {
-                matches.add(task);
-            }
-        }
-        return matches;
+        return tasks.stream()
+                .filter(task -> task.isOn(date))
+                .toList();
     }
 
     /**
@@ -120,13 +116,9 @@ public class TaskList {
      * @return the matching tasks, empty if none match
      */
     public List<Task> find(String keyword) {
-        List<Task> matches = new ArrayList<>();
-        for (Task task : tasks) {
-            if (task.hasKeyword(keyword)) {
-                matches.add(task);
-            }
-        }
-        return matches;
+        return tasks.stream()
+                .filter(task -> task.hasKeyword(keyword))
+                .toList();
     }
 
     /**

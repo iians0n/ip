@@ -1,5 +1,8 @@
 package seedu.goat.command;
 
+import java.util.Arrays;
+import java.util.stream.Collectors;
+
 import seedu.goat.GoatException;
 
 /**
@@ -87,13 +90,8 @@ public enum Command {
      * @return the keywords separated by commas
      */
     private static String keywordList() {
-        StringBuilder joined = new StringBuilder();
-        for (Command command : values()) {
-            if (!joined.isEmpty()) {
-                joined.append(", ");
-            }
-            joined.append(command.keyword);
-        }
-        return joined.toString();
+        return Arrays.stream(values())
+                .map(Command::getKeyword)
+                .collect(Collectors.joining(", "));
     }
 }
