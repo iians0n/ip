@@ -96,6 +96,7 @@ public class Storage {
         // a bare | means alternation rather than a literal bar.
         String[] parts = line.split(" \\| ");
         requireFieldCount(parts, 3);
+        assert parts.length >= 3 : "requireFieldCount throws unless the shared fields are present";
 
         String type = parts[0];
         String status = parts[1];
@@ -159,6 +160,7 @@ public class Storage {
      * @throws GoatException if the file cannot be written
      */
     public void save(List<Task> tasks) throws GoatException {
+        assert tasks != null : "The caller always holds a list, even an empty one";
         try {
             Path parent = filePath.getParent();
             if (parent != null) {

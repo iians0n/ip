@@ -50,6 +50,10 @@ dependencies {
 test {
     useJUnitPlatform()
 
+    // The JVM ignores assertions unless it is told not to, so without this the checks
+    // written into the code would never run and could quietly rot.
+    jvmArgs '-ea'
+
     testLogging {
         events 'passed', 'skipped', 'failed'
 
@@ -80,4 +84,5 @@ shadowJar {
 
 run {
     standardInput = System.in
+    jvmArgs '-ea'
 }

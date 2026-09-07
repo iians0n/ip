@@ -59,6 +59,7 @@ public class MainWindow {
      */
     @FXML
     public void initialize() {
+        assert scrollPane != null && dialogContainer != null : "FXML fills the controls first";
         scrollPane.vvalueProperty().bind(dialogContainer.heightProperty());
     }
 
@@ -82,6 +83,7 @@ public class MainWindow {
     /** Adds the user's message and GOAT's reply to the transcript, then clears the field. */
     @FXML
     private void handleUserInput() {
+        assert goat != null : "setGoat runs before the window can accept input";
         String input = userInput.getText();
         if (input.isBlank()) {
             // An empty send would otherwise post a blank bubble and a complaint.
