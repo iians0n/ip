@@ -24,15 +24,6 @@ public class Deadline extends Task {
         this.by = by;
     }
 
-    /**
-     * Returns the date this task is due.
-     *
-     * @return the due date
-     */
-    public LocalDate getBy() {
-        return by;
-    }
-
     @Override
     public boolean isOn(LocalDate date) {
         return by.equals(date);

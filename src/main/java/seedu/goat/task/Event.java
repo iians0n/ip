@@ -30,24 +30,6 @@ public class Event extends Task {
     }
 
     /**
-     * Returns the date this event starts.
-     *
-     * @return the start date
-     */
-    public LocalDate getFrom() {
-        return from;
-    }
-
-    /**
-     * Returns the date this event ends.
-     *
-     * @return the end date
-     */
-    public LocalDate getTo() {
-        return to;
-    }
-
-    /**
      * Returns whether this event is running on a given date.
      *
      * @param date the date to test
