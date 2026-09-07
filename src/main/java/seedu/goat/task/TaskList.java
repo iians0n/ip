@@ -50,6 +50,7 @@ public class TaskList {
      * @param task the task to add
      */
     public void add(Task task) {
+        assert task != null : "A null task would break every later listing";
         tasks.add(task);
     }
 
@@ -60,6 +61,7 @@ public class TaskList {
      * @return the task that was removed
      */
     public Task delete(int index) {
+        assert index >= 0 && index < tasks.size() : "Callers check the position before deleting";
         return tasks.remove(index);
     }
 
@@ -70,6 +72,7 @@ public class TaskList {
      * @return the task at that position
      */
     public Task get(int index) {
+        assert index >= 0 && index < tasks.size() : "Callers check the position before reading";
         return tasks.get(index);
     }
 
@@ -101,6 +104,7 @@ public class TaskList {
      * @return the matching tasks, empty if none match
      */
     public List<Task> findOn(LocalDate date) {
+        assert date != null : "A date is parsed before the list is searched";
         List<Task> matches = new ArrayList<>();
         for (Task task : tasks) {
             if (task.isOn(date)) {
@@ -120,6 +124,7 @@ public class TaskList {
      * @return the matching tasks, empty if none match
      */
     public List<Task> find(String keyword) {
+        assert keyword != null : "The parser rejects a missing keyword before the search";
         List<Task> matches = new ArrayList<>();
         for (Task task : tasks) {
             if (task.hasKeyword(keyword)) {

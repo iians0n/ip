@@ -68,6 +68,7 @@ public class Goat {
             this.loadingError = e.getMessage();
             this.tasks = new TaskList();
         }
+        assert tasks != null : "A failed load must still leave an empty list to work with";
     }
 
     /** Greets the user, then handles typed commands until the conversation ends. */
@@ -200,6 +201,7 @@ public class Goat {
      * @throws GoatException if the updated list cannot be saved
      */
     private String addTask(Task task) throws GoatException {
+        assert task != null : "The parser returns a task or throws; it never returns null";
         tasks.add(task);
         storage.save(tasks.asList());
         return reply("Got it. I've added this task:", "  " + task, taskCountSummary());
@@ -251,7 +253,10 @@ public class Goat {
             throw new GoatException("There is no task " + taskNumber + ". Pick a number"
                     + " from 1 to " + tasks.size() + ".");
         }
-        return taskNumber - 1;
+
+        int index = taskNumber - 1;
+        assert index >= 0 && index < tasks.size() : "Only positions that exist survive the checks";
+        return index;
     }
 
     /**

@@ -49,8 +49,12 @@ public class Parser {
      * @throws GoatException if the first word matches no known command
      */
     public static ParsedCommand parse(String input) throws GoatException {
+        assert input != null : "A line of input is trimmed before it is parsed";
+
         // Split on the first space only, so arguments keep any spaces of their own.
         String[] parts = input.split(" ", 2);
+        assert parts.length >= 1 : "split always yields at least one element";
+
         String keyword = parts[0];
         String arguments = parts.length > 1 ? parts[1].trim() : "";
         return new ParsedCommand(Command.fromKeyword(keyword), arguments);

@@ -26,6 +26,7 @@ public abstract class Task {
      * @param description what the user wants to do
      */
     public Task(String description) {
+        assert description != null && !description.isBlank() : "Blank descriptions are rejected first";
         this.description = description;
         this.isDone = false;
     }
