@@ -19,6 +19,15 @@ import seedu.goat.task.Todo;
  */
 public class Parser {
 
+    /** Introduces the due date in a deadline command. */
+    private static final String BY_MARKER = "/by";
+
+    /** Introduces the start date in an event command. */
+    private static final String FROM_MARKER = "/from";
+
+    /** Introduces the end date in an event command. */
+    private static final String TO_MARKER = "/to";
+
     /**
      * A command together with the text that followed it.
      *
@@ -127,14 +136,14 @@ public class Parser {
      */
     public static Deadline parseDeadline(String arguments) throws GoatException {
         String example = "\"deadline return book /by 2019-12-02\"";
-        int byIndex = arguments.indexOf("/by");
+        int byIndex = arguments.indexOf(BY_MARKER);
         if (byIndex < 0) {
             throw new GoatException("A deadline needs a /by to say when it is due, as in "
                     + example + ".");
         }
 
         String description = arguments.substring(0, byIndex).trim();
-        String by = arguments.substring(byIndex + "/by".length()).trim();
+        String by = arguments.substring(byIndex + BY_MARKER.length()).trim();
         if (description.isEmpty()) {
             throw new GoatException("A deadline needs a description before the /by, as in "
                     + example + ".");
@@ -155,22 +164,22 @@ public class Parser {
      */
     public static Event parseEvent(String arguments) throws GoatException {
         String example = "\"event project meeting /from 2019-10-15 /to 2019-10-16\"";
-        int fromIndex = arguments.indexOf("/from");
+        int fromIndex = arguments.indexOf(FROM_MARKER);
         if (fromIndex < 0) {
             throw new GoatException("An event needs a /from to say when it starts, as in "
                     + example + ".");
         }
 
         // Search after /from so that a /to written before it is not mistaken for the end.
-        int toIndex = arguments.indexOf("/to", fromIndex + "/from".length());
+        int toIndex = arguments.indexOf(TO_MARKER, fromIndex + FROM_MARKER.length());
         if (toIndex < 0) {
             throw new GoatException("An event needs a /to after the /from, as in "
                     + example + ".");
         }
 
         String description = arguments.substring(0, fromIndex).trim();
-        String from = arguments.substring(fromIndex + "/from".length(), toIndex).trim();
-        String to = arguments.substring(toIndex + "/to".length()).trim();
+        String from = arguments.substring(fromIndex + FROM_MARKER.length(), toIndex).trim();
+        String to = arguments.substring(toIndex + TO_MARKER.length()).trim();
         if (description.isEmpty()) {
             throw new GoatException("An event needs a description before the /from, as in "
                     + example + ".");

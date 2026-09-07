@@ -299,12 +299,7 @@ public class Goat {
             return "Nothing is scheduled on " + DateFormats.format(date) + ".";
         }
 
-        List<String> lines = new ArrayList<>();
-        lines.add("Here is what you have on " + DateFormats.format(date) + ":");
-        for (Task task : matches) {
-            lines.add(lines.size() + "." + task);
-        }
-        return String.join("\n", lines);
+        return numberedList("Here is what you have on " + DateFormats.format(date) + ":", matches);
     }
 
     /**
@@ -319,12 +314,7 @@ public class Goat {
             return "No task in your list mentions \"" + keyword + "\".";
         }
 
-        List<String> lines = new ArrayList<>();
-        lines.add("Here are the matching tasks in your list:");
-        for (Task task : matches) {
-            lines.add(lines.size() + "." + task);
-        }
-        return String.join("\n", lines);
+        return numberedList("Here are the matching tasks in your list:", matches);
     }
 
     /**
@@ -333,10 +323,26 @@ public class Goat {
      * @return the tasks, numbered, under a heading
      */
     private String listTasks() {
+        return numberedList("Here are the tasks in your list:", tasks.asList());
+    }
+
+    /**
+     * Returns a heading with tasks listed beneath it, numbered from 1.
+     * <p>
+     * The three listing commands differ only in their heading and in which tasks they
+     * select, so the numbering lives here instead of being written out in each of them.
+     * Numbering from the loop counter also states the position directly, where building
+     * it from the length of the lines so far only worked while the heading was present.
+     *
+     * @param heading the line introducing the list
+     * @param tasksToShow the tasks to list, in the order they should appear
+     * @return the heading followed by one numbered task per line
+     */
+    private static String numberedList(String heading, List<Task> tasksToShow) {
         List<String> lines = new ArrayList<>();
-        lines.add("Here are the tasks in your list:");
-        for (int i = 0; i < tasks.size(); i++) {
-            lines.add((i + 1) + "." + tasks.get(i));
+        lines.add(heading);
+        for (int i = 0; i < tasksToShow.size(); i++) {
+            lines.add((i + 1) + "." + tasksToShow.get(i));
         }
         return String.join("\n", lines);
     }
