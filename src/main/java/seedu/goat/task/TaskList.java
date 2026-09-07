@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.IntStream;
 
 /**
  * Holds the tasks the user is tracking, in the order they were added.
@@ -124,6 +125,23 @@ public class TaskList {
         return tasks.stream()
                 .filter(task -> task.hasKeyword(keyword))
                 .toList();
+    }
+
+    /**
+     * Returns where a task that duplicates the given one already sits.
+     * <p>
+     * The position is returned rather than a plain yes or no so that the caller can name
+     * the offending task back to the user, who then knows which entry to look at.
+     *
+     * @param candidate the task the user is trying to add
+     * @return the zero-based position of the first duplicate, or -1 if there is none
+     */
+    public int indexOfDuplicate(Task candidate) {
+        assert candidate != null : "The parser builds a task before it is checked";
+        return IntStream.range(0, tasks.size())
+                .filter(i -> tasks.get(i).isDuplicateOf(candidate))
+                .findFirst()
+                .orElse(-1);
     }
 
     /**

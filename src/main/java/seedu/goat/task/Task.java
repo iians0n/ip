@@ -77,6 +77,35 @@ public abstract class Task {
     }
 
     /**
+     * Returns whether another task duplicates this one.
+     * <p>
+     * Two tasks match when they are the same kind of task and describe the same thing.
+     * Descriptions are compared with spacing and capitalisation set aside, so that
+     * "Read  Book" is recognised as the task the user already has. Subclasses that
+     * carry dates narrow this further, since the same words on a different day are a
+     * different commitment. Completion is not consulted: having finished a task does
+     * not entitle the list to hold a second copy of it.
+     *
+     * @param other the task to compare against, never null
+     * @return true if the two tasks are duplicates of one another
+     */
+    public boolean isDuplicateOf(Task other) {
+        assert other != null : "Callers compare against tasks already in the list";
+        return getClass() == other.getClass()
+                && normalise(description).equals(normalise(other.description));
+    }
+
+    /**
+     * Returns a description reduced to the form used for comparing two of them.
+     *
+     * @param text the description as the user typed it
+     * @return the description trimmed, with runs of spaces collapsed, in lower case
+     */
+    private static String normalise(String text) {
+        return text.trim().replaceAll("\\s+", " ").toLowerCase();
+    }
+
+    /**
      * Returns the completion flag as it is written to the save file.
      *
      * @return {@code "1"} if this task is done, {@code "0"} otherwise

@@ -202,6 +202,15 @@ public class Goat {
      */
     private String addTask(Task task) throws GoatException {
         assert task != null : "The parser returns a task or throws; it never returns null";
+
+        int duplicate = tasks.indexOfDuplicate(task);
+        if (duplicate >= 0) {
+            // Refused the same way as any other unusable input, so that both the console
+            // and the window show the complaint and carry on.
+            throw new GoatException(reply("You already have this task:",
+                    "  " + (duplicate + 1) + "." + tasks.get(duplicate)));
+        }
+
         tasks.add(task);
         storage.save(tasks.asList());
         return reply("Got it. I've added this task:", "  " + task, taskCountSummary());

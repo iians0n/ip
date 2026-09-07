@@ -25,4 +25,10 @@ find book
 find BOOK
 find nothingmatches
 find
+todo borrow book
+todo   BORROW   Book
+deadline do homework /by 2019-10-15
+deadline return book /by 2020-01-01
+event project meeting /from 2019-10-15 /to 2019-10-16
+list
 bye
