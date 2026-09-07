@@ -21,6 +21,21 @@ import seedu.goat.task.Todo;
  */
 public class Storage {
 
+    /** Fields every encoded task carries: its type, its status and its description. */
+    private static final int SHARED_FIELD_COUNT = 3;
+
+    /** Fields a deadline carries: the shared three and its due date. */
+    private static final int DEADLINE_FIELD_COUNT = 4;
+
+    /** Fields an event carries: the shared three and its two dates. */
+    private static final int EVENT_FIELD_COUNT = 5;
+
+    /** The status field of a task the user has completed. */
+    private static final String STATUS_DONE = "1";
+
+    /** The status field of a task still outstanding. */
+    private static final String STATUS_NOT_DONE = "0";
+
     /** Where the task list is kept between runs. */
     private final Path filePath;
 
@@ -95,13 +110,13 @@ public class Storage {
         // The separator is escaped because split() takes a regular expression, in which
         // a bare | means alternation rather than a literal bar.
         String[] parts = line.split(" \\| ");
-        requireFieldCount(parts, 3);
-        assert parts.length >= 3 : "requireFieldCount throws unless the shared fields are present";
+        requireFieldCount(parts, SHARED_FIELD_COUNT);
+        assert parts.length >= SHARED_FIELD_COUNT : "requireFieldCount throws unless present";
 
         String type = parts[0];
         String status = parts[1];
         String description = parts[2];
-        if (!status.equals("0") && !status.equals("1")) {
+        if (!status.equals(STATUS_NOT_DONE) && !status.equals(STATUS_DONE)) {
             throw new GoatException("status must be 0 or 1");
         }
         if (description.isBlank()) {
@@ -111,11 +126,11 @@ public class Storage {
         Task task = switch (type) {
             case "T" -> new Todo(description);
             case "D" -> {
-                requireFieldCount(parts, 4);
+                requireFieldCount(parts, DEADLINE_FIELD_COUNT);
                 yield new Deadline(description, DateFormats.parse(parts[3]));
             }
             case "E" -> {
-                requireFieldCount(parts, 5);
+                requireFieldCount(parts, EVENT_FIELD_COUNT);
                 yield new Event(description, DateFormats.parse(parts[3]),
                         DateFormats.parse(parts[4]));
             }
@@ -124,7 +139,7 @@ public class Storage {
             default -> throw new GoatException("unknown task type " + type);
         };
 
-        if (status.equals("1")) {
+        if (status.equals(STATUS_DONE)) {
             task.markAsDone();
         }
         return task;
