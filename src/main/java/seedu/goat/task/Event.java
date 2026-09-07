@@ -41,6 +41,18 @@ public class Event extends Task {
     }
 
     @Override
+    public boolean isDuplicateOf(Task other) {
+        if (!super.isDuplicateOf(other)) {
+            return false;
+        }
+
+        // Only now is the cast safe: the base check has established that both tasks
+        // are events, which casting before that check would have assumed too early.
+        Event otherEvent = (Event) other;
+        return from.equals(otherEvent.from) && to.equals(otherEvent.to);
+    }
+
+    @Override
     public String toFileString() {
         return "E | " + getFileStatus() + " | " + description + " | " + from + " | " + to;
     }

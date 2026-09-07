@@ -168,4 +168,85 @@ public class TaskListTest {
         tasks.add(new Todo("read book"));
         assertFalse(tasks.isEmpty());
     }
+
+    @Test
+    public void indexOfDuplicate_identicalTodo_foundAtItsPosition() {
+        TaskList tasks = new TaskList(new Todo("write report"), new Todo("read book"));
+        assertEquals(1, tasks.indexOfDuplicate(new Todo("read book")));
+    }
+
+    @Test
+    public void indexOfDuplicate_noSuchTask_minusOne() {
+        TaskList tasks = new TaskList(new Todo("read book"));
+        assertEquals(-1, tasks.indexOfDuplicate(new Todo("buy bread")));
+    }
+
+    @Test
+    public void indexOfDuplicate_emptyList_minusOne() {
+        assertEquals(-1, new TaskList().indexOfDuplicate(new Todo("read book")));
+    }
+
+    @Test
+    public void indexOfDuplicate_differentCaseAndSpacing_stillADuplicate() {
+        // A user retyping a task rarely reproduces their own capitalisation exactly.
+        TaskList tasks = new TaskList(new Todo("read book"));
+        assertEquals(0, tasks.indexOfDuplicate(new Todo("  Read   BOOK  ")));
+    }
+
+    @Test
+    public void indexOfDuplicate_sameWordsDifferentType_notADuplicate() {
+        // A todo and a deadline describe different commitments even when worded alike.
+        TaskList tasks = new TaskList(new Todo("return book"));
+        assertEquals(-1, tasks.indexOfDuplicate(new Deadline("return book", OCT_15)));
+    }
+
+    @Test
+    public void indexOfDuplicate_sameDeadlineDifferentDay_notADuplicate() {
+        TaskList tasks = new TaskList(new Deadline("return book", OCT_15));
+        assertEquals(-1, tasks.indexOfDuplicate(
+                new Deadline("return book", LocalDate.of(2019, 12, 2))));
+    }
+
+    @Test
+    public void indexOfDuplicate_sameDeadlineSameDay_isADuplicate() {
+        TaskList tasks = new TaskList(new Deadline("return book", OCT_15));
+        assertEquals(0, tasks.indexOfDuplicate(new Deadline("return book", OCT_15)));
+    }
+
+    @Test
+    public void indexOfDuplicate_eventDifferingOnlyInEndDate_notADuplicate() {
+        TaskList tasks = new TaskList(new Event("conference", OCT_15, OCT_15));
+        assertEquals(-1, tasks.indexOfDuplicate(
+                new Event("conference", OCT_15, LocalDate.of(2019, 10, 16))));
+    }
+
+    @Test
+    public void indexOfDuplicate_eventMatchingOnBothDates_isADuplicate() {
+        TaskList tasks = new TaskList(new Event("conference", OCT_15, OCT_15));
+        assertEquals(0, tasks.indexOfDuplicate(new Event("conference", OCT_15, OCT_15)));
+    }
+
+    @Test
+    public void indexOfDuplicate_eventComparedAgainstDeadline_notADuplicate() {
+        // A dated task must not assume the task it is compared with carries the same
+        // kind of dates; doing so once cost an unchecked cast at run time.
+        TaskList tasks = new TaskList(new Deadline("return book", OCT_15));
+        assertEquals(-1, tasks.indexOfDuplicate(new Event("return book", OCT_15, OCT_15)));
+    }
+
+    @Test
+    public void indexOfDuplicate_deadlineComparedAgainstEvent_notADuplicate() {
+        TaskList tasks = new TaskList(new Event("return book", OCT_15, OCT_15));
+        assertEquals(-1, tasks.indexOfDuplicate(new Deadline("return book", OCT_15)));
+    }
+
+    @Test
+    public void indexOfDuplicate_existingTaskAlreadyDone_stillADuplicate() {
+        // Having finished a task does not entitle the list to hold a second copy.
+        Todo done = new Todo("read book");
+        done.markAsDone();
+        TaskList tasks = new TaskList(done);
+
+        assertEquals(0, tasks.indexOfDuplicate(new Todo("read book")));
+    }
 }

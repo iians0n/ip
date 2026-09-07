@@ -30,6 +30,13 @@ public class Deadline extends Task {
     }
 
     @Override
+    public boolean isDuplicateOf(Task other) {
+        // The cast is safe because the base check has already established that both
+        // tasks are deadlines.
+        return super.isDuplicateOf(other) && by.equals(((Deadline) other).by);
+    }
+
+    @Override
     public String toFileString() {
         // LocalDate.toString() is the ISO form, which is exactly what parse() reads back.
         return "D | " + getFileStatus() + " | " + description + " | " + by;
