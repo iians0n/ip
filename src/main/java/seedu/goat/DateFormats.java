@@ -50,6 +50,7 @@ public class DateFormats {
      * @return the date as {@code MMM dd yyyy}, such as {@code Oct 15 2019}
      */
     public static String format(LocalDate date) {
+        assert date != null : "Every date shown was parsed successfully first";
         return date.format(DISPLAY_FORMAT);
     }
 }

@@ -25,7 +25,7 @@ if ! ./gradlew --quiet compileJava; then
     exit 1
 fi
 
-"$JAVA_HOME/bin/java" -cp build/classes/java/main seedu.goat.Goat \
+"$JAVA_HOME/bin/java" -ea -cp build/classes/java/main seedu.goat.Goat \
     < text-ui-test/input.txt > text-ui-test/ACTUAL.TXT
 
 if [ "${1:-}" = "--bless" ]; then
