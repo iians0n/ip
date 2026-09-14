@@ -17,8 +17,8 @@ grown one increment at a time from the course's project template.
 | Command | What it does | Example |
 |---|---|---|
 | `todo DESCRIPTION` | Adds a task with no date | `todo borrow book` |
-| `deadline DESCRIPTION /by WHEN` | Adds a task that is due at some point | `deadline return book /by Sunday` |
-| `event DESCRIPTION /from START /to END` | Adds a task that spans a period | `event project meeting /from Mon 2pm /to 4pm` |
+| `deadline DESCRIPTION /by WHEN` | Adds a task that is due at some point | `deadline return book /by 2026-09-18` |
+| `event DESCRIPTION /from START /to END` | Adds a task that spans a period | `event project meeting /from 2026-09-18 /to 2026-09-19` |
 | `list` | Shows every task, numbered, with its status | `list` |
 | `mark N` | Marks task `N` as done | `mark 2` |
 | `unmark N` | Marks task `N` as not done | `unmark 2` |
@@ -36,8 +36,8 @@ commands.
 
 ## Prerequisites
 
-JDK 25. JavaFX comes from the Gradle build rather than from the JDK, so a plain JDK 25
-works as well as a build that bundles JavaFX. Check yours with:
+JDK 25. On macOS, use the [course-prescribed Zulu JavaFX JDK 25](https://se-education.org/guides/tutorials/javaInstallationMac.html).
+The JAR also bundles the course JavaFX dependencies for Windows, macOS and Linux. Check yours with:
 
 ```bash
 java -version
@@ -121,3 +121,23 @@ I used **Claude Code**, Anthropic's command-line coding agent, while building th
 project. It was used to write and refactor the code for the increments in this
 repository, working from the course's increment specifications and under my direction.
 The course permits AI-assisted work at levels AI-2 to AI-5.
+
+
+For downloads, commands, date rules and storage recovery, see the
+[GOAT User Guide](https://iians0n.github.io/ip/).
+
+For Week 6, **iians0n (Anson Ng)** used **OpenAI Codex** extensively to audit
+requirements, implement error handling and storage protection, expand JUnit
+tests, improve GUI readability, update documentation, and run build and
+submission checks. The changes were produced in response to the owner's
+instructions; this acknowledgement does not imply independent manual review
+of every generated line by the owner.
+
+The project uses **OpenJFX**, **JUnit Jupiter**, **Checkstyle**, **Gradle**, and
+the **Gradle Shadow plugin**, following the course tutorials and tooling.
+The JavaFX launcher, FXML layout and dialog pattern follow the
+[SE-EDU JavaFX tutorial](https://se-education.org/guides/tutorials/javaFxPart1.html).
+Course material reuse is exempt from per-block attribution under the course
+policy; no external code snippets were copied during this Week 6 update.
+The earlier avatar photographs had no recorded source/license and have been
+removed from the current product. The current speaker labels use text only.
