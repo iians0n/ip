@@ -86,6 +86,13 @@ java -cp build/classes/java/main seedu.goat.Goat
 
 ## Running the tests
 
+Run `./gradlew check` for the JUnit suite and Checkstyle checks.
+[GitHub Actions](https://github.com/iians0n/ip/actions/workflows/verify.yml)
+runs these checks on Windows and Linux with Java 25. It also downloads the
+public release and checks its digest, commands, persistence, damaged-file
+protection, and GUI process startup in temporary directories. This automated
+startup check does not replace visual or interactive GUI testing.
+
 `text-ui-test/runtest.sh` feeds `input.txt` to GOAT and compares the output against
 `EXPECTED.TXT`, printing a diff of anything that changed:
 
@@ -105,8 +112,8 @@ extension at your JDK 25 installation.
 level** to `SDK default`, then run `src/main/java/seedu/goat/Launcher.java`.
 
 Classes are organised under `src/main/java/seedu/goat`, split into `command`,
-`parser`, `storage`, `task` and `ui` subpackages. The window's layout, stylesheets and
-images live alongside them in `src/main/resources`.
+`parser`, `storage`, `task` and `ui` subpackages. The window's layout and
+stylesheets live alongside them in `src/main/resources`.
 
 **Warning:** keep `src/main/java` as the root folder for Java files. Do not rename those
 folders or move Java files outside that path, as tools such as Gradle expect to find them

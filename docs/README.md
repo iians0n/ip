@@ -23,7 +23,8 @@ needed by Windows/Linux users. The macOS test used Zulu's JavaFX JDK 25.
 
 Commands and date markers are lowercase. Surrounding spaces and extra spaces
 or tabs after the command are fine. Descriptions may contain multiple words.
-Enter one command at a time; the separator ` | ` is reserved for saved data.
+Enter one command at a time. A vertical bar with a space on each side is
+reserved as the saved-data separator.
 A blank GUI submission is ignored.
 
 | Command | Example | What happens |

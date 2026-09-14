@@ -19,7 +19,7 @@ public tags, or historical commits were rewritten or deleted.
 | Week 5 A-Assertions, A-CodeQuality, A-Streams | Fork PRs #1–#3 merged September 7; exact tags; parallel branches and master sync merges retained | No required history change | Assertions enabled, command handlers inspected, stream implementations and tests pass |
 | A-FullCommitMessage | Existing tag at `44fd1db`; at least three Week 5 commits have explanatory bodies | No historical change | Inspected `44fd1db`, `0cbf82b`, `1e6a928` |
 | BCD-Extension | Duplicate detection in PR #4, tag `69df496` | Confirm team members chose different extensions | Duplicate tests pass; team coordination is not inferable from Git |
-| A-CI | No workflow/tag | Optional increment not selected | Week 5 calls this optional; no completion claimed |
+| A-CI | No workflow/tag at initial audit | Add repeatable cross-platform verification | Java 25 source checks and public JAR smoke tests pass on Windows/Linux; completion commit `6f44079` |
 | A-MoreErrorHandling | Existing basic input errors, strict ISO parsing, duplicate rejection | Repeated parameters, whitespace, unsafe overwrites, failed-save consistency | Implemented and tested; tag `9959a43` |
 | A-MoreTesting | 77 JUnit tests in four suites at baseline | Application sequences, command enum, model state, text UI, storage failures, locale/boundaries | 99 tests in eight suites, all pass; text test now isolated; tag `8682967` |
 | A-BetterGui | Existing bubbles, resizing, avatars | Unverified avatar licenses and text readability | Replaced photos with text labels, improved contrast/default width, verified final GUI; tag `623d5f2` |
@@ -28,7 +28,7 @@ public tags, or historical commits were rewritten or deleted.
 | AI and reuse acknowledgement | Root README already credits Claude Code | Credit extensive Week 6 Codex use and tooling | Credits preserved and extended; undocumented avatar media removed; no new runtime libraries |
 | Java 25 and fat JAR | Java 25 build and course JavaFX dependencies already configured | Final clean build, manifest/resource verification and isolated launch | See release verification below |
 | Git history and tags | All earlier refs already pushed | New genuine commits and exact Week 6 tags | No force push, tag moves, backdating, or synthetic history; no `Git Standard` tag |
-| Final submission | No GitHub releases and Pages disabled initially | Publish one public JAR release and Pages | Pages enabled at `master:/docs`; release publication is the final external step after this audit snapshot |
+| Final submission | No GitHub releases and Pages disabled initially | Publish one public JAR release and Pages | Pages enabled at `master:/docs`; public release `v0.2` verified; `v0.3` carries this final audit and the same evaluated JAR |
 | Historical progress / attendance | Commits dated August 20, August 26, September 5, September 7 | Attendance, Git-Mastery work, team coordination and personal dashboard mapping cannot be inferred | No historical completion or all-green dashboard claim |
 
 ## Choices and compatibility
@@ -77,8 +77,18 @@ failure is reported rather than falling back to an unsafe overwrite.
   by the automation service, so no minimum-size test is claimed.
 - `docs/Ui.png` is an unaltered capture of one complete running GUI window,
   showing the persisted sample list and GOAT title. No generated mockup.
-- Windows/Linux execution remains untested. Packaged native files alone are
-  not evidence of successful execution on those systems.
+- [Cross-platform CI run](https://github.com/iians0n/ip/actions/runs/34847476762)
+  passed on Linux x86_64 (kernel 6.17.0-1022-azure, glibc 2.39) and Windows
+  Server 2025 AMD64 (build 26100), using Temurin Java 25.0.4.1.
+  Both ran `./gradlew check`, then downloaded the public release JAR and
+  verified its SHA-256, all task types, queries, mark/unmark/delete, invalid
+  input, restart persistence, and damaged-file preservation. Each launched
+  the packaged GUI in a fresh directory for ten seconds without startup
+  errors (Linux under Xvfb). These are process-startup checks, not visual
+  layout or interactive GUI checks. Mac interactive coverage is above.
+- `scripts/release_smoke.py` also passed on macOS Java 25.0.4. It uses only
+  Python's standard library, deletes only its temporary test directory,
+  and terminates only its own GUI child process.
 
 The macOS course installation page names the older Zulu FX patch 25.0.3.
 The installed 25.0.4 distribution passed all checks. The official Azul
@@ -94,13 +104,20 @@ were verified in that runtime.
 Final JAR: `goat.jar` (10,751,985 bytes).
 SHA-256: `4f1d8ad9b06986a968674f836094cea6e2df604ac42d42cccbc8e6b1ebcd4d31`.
 
-Pages API reports a successful build at `bab1a90`, using `master:/docs`.
-Anonymous HTTPS requests to the [guide](https://iians0n.github.io/ip/) and
-[screenshot](https://iians0n.github.io/ip/Ui.png) succeeded. The generated HTML
-contains a real command table, the product heading, all guide sections and
-correct link targets. Downloaded screenshot bytes match `docs/Ui.png`.
-Browser visual verification was blocked by Chrome reporting that tabs could
-not be edited; no browser screenshot of the website is claimed.
+Pages API reports successful builds using `master:/docs`, including
+`6f44079`. Anonymous HTTPS requests to the [guide](https://iians0n.github.io/ip/)
+and [screenshot](https://iians0n.github.io/ip/Ui.png) succeeded. The generated
+HTML contains a real command table, the product heading, all guide sections
+and correct link targets. Downloaded screenshot bytes match `docs/Ui.png`.
+Chrome visual inspection confirmed the header, app screenshot, command
+examples/table, date rules, storage recovery and error guidance are readable.
+A literal-backtick formatting issue in the separator sentence was simplified
+into plain language.
+
+The public non-draft release `v0.2` contains exactly one `goat.jar`; an
+anonymous download matched the evaluated local JAR byte for byte. Final
+release `v0.3` is to use the same verified binary at the final documentation
+commit. No Java or packaged resource changed after the evaluated build.
 
 The public progress dashboard was last updated September 13 at 23:45 when
 checked. It uses masked student identifiers; no reliable mapping to `iians0n`
@@ -144,6 +161,7 @@ were sent on the owner's behalf.
 
 ## Authoritative sources
 
+- [iP grading rubric](https://nus-cs2103-ay2627-s1.github.io/website/admin/ip-grading.html)
 - [Week 6 project](https://nus-cs2103-ay2627-s1.github.io/website/schedule/week6/project.html)
 - [Course standards](https://nus-cs2103-ay2627-s1.github.io/website/admin/standardsAndConventions.html)
 - [Java basic + intermediate](https://se-education.org/guides/conventions/java/intermediate.html)
@@ -158,7 +176,11 @@ were sent on the owner's behalf.
 
 The Week 6 deadline is September 18, 2026 at 23:59 Singapore time. The source,
 guide and latest release JAR form the submission; there is no separate Canvas
-submission. This audit does not predict marks.
+submission. The grading rubric includes manual judgments and historical
+weekly evidence; passing checks does not guarantee full marks. Attendance,
+Git-Mastery work, team extension choices and masked dashboard status still
+require information outside this repository. No further application defect
+was found by the checks documented here.
 
 ## Earlier tag inventory (preserved)
 
