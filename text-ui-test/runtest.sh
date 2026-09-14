@@ -10,12 +10,9 @@ set -u
 
 cd "$(dirname "$0")/.." || exit 1
 
-JAVA_HOME="${JAVA_HOME:-$(/usr/libexec/java_home -v 25)}"
-export JAVA_HOME
-
-# GOAT now persists tasks, so clear any saved data first. Otherwise the previous run's
-# tasks would be loaded and the output would differ from EXPECTED.TXT.
-rm -rf data
+PROJECT_DIR="$PWD"
+TEST_DIR="$(mktemp -d)" || exit 1
+trap 'rm -rf "$TEST_DIR"' EXIT
 
 # Compiled through Gradle rather than by calling javac directly, because the GUI classes
 # need the JavaFX jars that Gradle already resolves. The text interface itself loads none
@@ -25,8 +22,11 @@ if ! ./gradlew --quiet compileJava; then
     exit 1
 fi
 
-"$JAVA_HOME/bin/java" -ea -cp build/classes/java/main seedu.goat.Goat \
-    < text-ui-test/input.txt > text-ui-test/ACTUAL.TXT
+(
+    cd "$TEST_DIR" || exit 1
+    java -ea -cp "$PROJECT_DIR/build/classes/java/main" seedu.goat.Goat \
+        < "$PROJECT_DIR/text-ui-test/input.txt" > "$PROJECT_DIR/text-ui-test/ACTUAL.TXT"
+)
 
 if [ "${1:-}" = "--bless" ]; then
     cp text-ui-test/ACTUAL.TXT text-ui-test/EXPECTED.TXT
