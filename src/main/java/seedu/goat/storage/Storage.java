@@ -2,8 +2,11 @@ package seedu.goat.storage;
 
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.LinkOption;
 import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import seedu.goat.DateFormats;
@@ -39,6 +42,15 @@ public class Storage {
     /** Where the task list is kept between runs. */
     private final Path filePath;
 
+    /** Whether reading failed or malformed records make overwriting unsafe. */
+    private boolean isReadOnly;
+
+    /** Bytes last read or saved, used to detect another writer. */
+    private byte[] savedBytes;
+
+    /** Whether the file has been inspected by this instance. */
+    private boolean hasLoaded;
+
     /**
      * Creates a store backed by the given file.
      *
@@ -65,16 +77,23 @@ public class Storage {
     public List<Task> load() throws GoatException {
         List<Task> tasks = new ArrayList<>();
         skippedLineCount = 0;
-        if (!Files.exists(filePath)) {
-            return tasks;
-        }
-
+        isReadOnly = true;
+        hasLoaded = true;
         List<String> lines;
         try {
+            if (Files.notExists(filePath, LinkOption.NOFOLLOW_LINKS)) {
+                savedBytes = null;
+                isReadOnly = false;
+                return tasks;
+            }
+            if (Files.isSymbolicLink(filePath)) {
+                throw new IOException("Symbolic links are not supported");
+            }
+            savedBytes = Files.readAllBytes(filePath);
             lines = Files.readAllLines(filePath);
-        } catch (IOException e) {
+        } catch (IOException | SecurityException e) {
             throw new GoatException("I could not read your saved tasks from " + filePath
-                    + ", so I am starting with an empty list.");
+                    + ". Changes are disabled. Back up the file, fix its permissions or contents, and restart.");
         }
 
         for (String line : lines) {
@@ -87,6 +106,7 @@ public class Storage {
                 skippedLineCount++;
             }
         }
+        isReadOnly = skippedLineCount > 0;
         return tasks;
     }
 
@@ -109,7 +129,7 @@ public class Storage {
     private static Task parseLine(String line) throws GoatException {
         // The separator is escaped because split() takes a regular expression, in which
         // a bare | means alternation rather than a literal bar.
-        String[] parts = line.split(" \\| ");
+        String[] parts = line.split(" \\| ", -1);
         requireFieldCount(parts, SHARED_FIELD_COUNT);
         assert parts.length >= SHARED_FIELD_COUNT : "requireFieldCount throws unless present";
 
@@ -123,6 +143,15 @@ public class Storage {
             throw new GoatException("description is empty");
         }
 
+        int expected = switch (type) {
+            case "T" -> SHARED_FIELD_COUNT;
+            case "D" -> DEADLINE_FIELD_COUNT;
+            case "E" -> EVENT_FIELD_COUNT;
+            default -> throw new GoatException("unknown task type " + type);
+        };
+        if (parts.length != expected) {
+            throw new GoatException("unexpected number of fields");
+        }
         Task task = switch (type) {
             case "T" -> new Todo(description);
             case "D" -> {
@@ -131,8 +160,12 @@ public class Storage {
             }
             case "E" -> {
                 requireFieldCount(parts, EVENT_FIELD_COUNT);
-                yield new Event(description, DateFormats.parse(parts[3]),
-                        DateFormats.parse(parts[4]));
+                var start = DateFormats.parse(parts[3]);
+                var end = DateFormats.parse(parts[4]);
+                if (end.isBefore(start)) {
+                    throw new GoatException("event ends before it starts");
+                }
+                yield new Event(description, start, end);
             }
             // Without this the decoder would guess, and an unrecognised letter would be
             // silently turned into some other kind of task.
@@ -176,21 +209,42 @@ public class Storage {
      */
     public void save(List<Task> tasks) throws GoatException {
         assert tasks != null : "The caller always holds a list, even an empty one";
+        if (!hasLoaded) {
+            load();
+        }
+        if (isReadOnly) {
+            throw new GoatException("Changes are disabled to protect " + filePath
+                    + ". Back up the original, repair the file or permissions, and restart GOAT.");
+        }
+        Path temporary = null;
         try {
-            Path parent = filePath.getParent();
-            if (parent != null) {
-                // Creates every missing directory in the path, and does nothing if they
-                // all already exist, so first run and later runs take the same route.
-                Files.createDirectories(parent);
+            Path target = filePath.toAbsolutePath();
+            Files.createDirectories(target.getParent());
+            byte[] current = Files.notExists(target, LinkOption.NOFOLLOW_LINKS)
+                    ? null : Files.readAllBytes(target);
+            if (Files.isSymbolicLink(target) || !Arrays.equals(savedBytes, current)) {
+                throw new IOException("The save file changed outside GOAT");
             }
-
-            List<String> lines = tasks.stream()
-                    .map(Task::toFileString)
-                    .toList();
-            Files.write(filePath, lines);
-        } catch (IOException e) {
+            List<String> lines = tasks.stream().map(Task::toFileString).toList();
+            temporary = Files.createTempFile(target.getParent(), "goat-", ".tmp");
+            Files.write(temporary, lines);
+            byte[] replacement = Files.readAllBytes(temporary);
+            // Refuse the save if atomic replacement is unavailable: keep the old file intact.
+            Files.move(temporary, target, StandardCopyOption.ATOMIC_MOVE,
+                    StandardCopyOption.REPLACE_EXISTING);
+            savedBytes = replacement;
+        } catch (IOException | SecurityException e) {
             throw new GoatException("I could not save your tasks to " + filePath
-                    + ". Your list is still correct in this session.");
+                    + ". No change was applied. Check permissions, disk space, or changes from another app."
+                    + " Back up the file and restart GOAT before retrying.");
+        } finally {
+            if (temporary != null) {
+                try {
+                    Files.deleteIfExists(temporary);
+                } catch (IOException | SecurityException e) {
+                    // An abandoned temporary file is harmless; never delete the original to clean up.
+                }
+            }
         }
     }
 }

@@ -1,6 +1,7 @@
 package seedu.goat.task;
 
 import java.time.LocalDate;
+import java.util.Locale;
 
 /**
  * A single item on the user's task list.
@@ -29,6 +30,24 @@ public abstract class Task {
         assert description != null && !description.isBlank() : "Blank descriptions are rejected first";
         this.description = description;
         this.isDone = false;
+    }
+
+    /**
+     * Returns whether this task is completed.
+     *
+     * @return true if completed.
+     */
+    public boolean isDone() {
+        return isDone;
+    }
+
+    /**
+     * Sets whether this task is completed.
+     *
+     * @param isDone whether the task is completed.
+     */
+    public void setDone(boolean isDone) {
+        this.isDone = isDone;
     }
 
     /** Marks this task as completed. */
@@ -73,7 +92,7 @@ public abstract class Task {
      * @return true if the description contains the keyword
      */
     public boolean hasKeyword(String keyword) {
-        return description.toLowerCase().contains(keyword.toLowerCase());
+        return description.toLowerCase(Locale.ROOT).contains(keyword.toLowerCase(Locale.ROOT));
     }
 
     /**
@@ -92,7 +111,7 @@ public abstract class Task {
     public boolean isDuplicateOf(Task other) {
         assert other != null : "Callers compare against tasks already in the list";
         return getClass() == other.getClass()
-                && normalise(description).equals(normalise(other.description));
+                && normalize(description).equals(normalize(other.description));
     }
 
     /**
@@ -101,8 +120,8 @@ public abstract class Task {
      * @param text the description as the user typed it
      * @return the description trimmed, with runs of spaces collapsed, in lower case
      */
-    private static String normalise(String text) {
-        return text.trim().replaceAll("\\s+", " ").toLowerCase();
+    private static String normalize(String text) {
+        return text.trim().replaceAll("\\s+", " ").toLowerCase(Locale.ROOT);
     }
 
     /**

@@ -3,6 +3,7 @@ package seedu.goat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.util.Locale;
 
 /**
  * Converts dates between the three forms GOAT uses.
@@ -15,7 +16,7 @@ public class DateFormats {
 
     /** How a date is shown to the user, for example {@code Oct 15 2019}. */
     private static final DateTimeFormatter DISPLAY_FORMAT =
-            DateTimeFormatter.ofPattern("MMM dd yyyy");
+            DateTimeFormatter.ofPattern("MMM dd yyyy", Locale.ENGLISH);
 
     /** The date format GOAT accepts, quoted in error messages. */
     public static final String INPUT_FORMAT = "yyyy-mm-dd";

@@ -55,7 +55,7 @@ public class Goat {
      * Creates a chatbot backed by the given save file.
      * <p>
      * A save file that cannot be read leaves GOAT running with an empty list rather than
-     * refusing to start, because an unusable chatbot is a worse outcome than a lost list.
+     * refusing to start. Storage disables changes until the original file is repaired.
      *
      * @param filePath relative path to the save file
      */
@@ -125,7 +125,8 @@ public class Goat {
             return reply(
                     "Some of your save file was unreadable, so I skipped " + skipped
                             + (skipped == 1 ? " line." : " lines."),
-                    "The " + tasks.size() + " tasks I could read are in your list.");
+                    "The " + tasks.size() + " tasks I could read are in your list.",
+                    "Changes are disabled. Back up and repair the original file, then restart GOAT.");
         }
         if (!tasks.isEmpty()) {
             return "Welcome back. I restored " + tasks.size()
@@ -145,7 +146,7 @@ public class Goat {
      */
     public String getResponse(String input) {
         try {
-            Parser.ParsedCommand parsed = Parser.parse(input.trim());
+            Parser.ParsedCommand parsed = Parser.parse(input);
             Command command = parsed.command();
             String arguments = parsed.arguments();
 
@@ -211,8 +212,10 @@ public class Goat {
                     "  " + (duplicate + 1) + "." + tasks.get(duplicate)));
         }
 
-        tasks.add(task);
-        storage.save(tasks.asList());
+        List<Task> updated = new ArrayList<>(tasks.asList());
+        updated.add(task);
+        storage.save(updated);
+        tasks = new TaskList(updated);
         return reply("Got it. I've added this task:", "  " + task, taskCountSummary());
     }
 
@@ -227,8 +230,10 @@ public class Goat {
         // delete() returns the removed element, so the confirmation can show the task
         // even though it is no longer in the list. Later tasks shift down by one, which
         // is why list renumbers them automatically.
-        Task removed = tasks.delete(toIndex(taskNumber, Command.DELETE));
-        storage.save(tasks.asList());
+        List<Task> updated = new ArrayList<>(tasks.asList());
+        Task removed = updated.remove(toIndex(taskNumber, Command.DELETE));
+        storage.save(updated);
+        tasks = new TaskList(updated);
         return reply("Noted. I've removed this task:", "  " + removed, taskCountSummary());
     }
 
@@ -278,8 +283,7 @@ public class Goat {
     private String markTask(int taskNumber) throws GoatException {
         int index = toIndex(taskNumber, Command.MARK);
         Task task = tasks.get(index);
-        task.markAsDone();
-        storage.save(tasks.asList());
+        saveStatus(task, true);
         return reply("Nice! I've marked this task as done:", "  " + task);
     }
 
@@ -293,8 +297,7 @@ public class Goat {
     private String unmarkTask(int taskNumber) throws GoatException {
         int index = toIndex(taskNumber, Command.UNMARK);
         Task task = tasks.get(index);
-        task.markAsNotDone();
-        storage.save(tasks.asList());
+        saveStatus(task, false);
         return reply("OK, I've marked this task as not done yet:", "  " + task);
     }
 
@@ -360,4 +363,16 @@ public class Goat {
         }
         return String.join("\n", lines);
     }
+    /** Saves a status change, restoring the previous status if persistence fails. */
+    private void saveStatus(Task task, boolean isDone) throws GoatException {
+        boolean wasDone = task.isDone();
+        task.setDone(isDone);
+        try {
+            storage.save(tasks.asList());
+        } catch (GoatException e) {
+            task.setDone(wasDone);
+            throw e;
+        }
+    }
+
 }
