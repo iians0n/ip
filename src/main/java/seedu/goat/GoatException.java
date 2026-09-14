@@ -12,7 +12,7 @@ public class GoatException extends Exception {
     /**
      * Creates an exception whose message is shown directly to the user.
      *
-     * @param message what went wrong, phrased as advice rather than as a stack trace
+     * @param message what went wrong, phrased as advice rather than as a stack trace.
      */
     public GoatException(String message) {
         super(message);

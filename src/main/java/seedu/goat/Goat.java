@@ -57,7 +57,7 @@ public class Goat {
      * A save file that cannot be read leaves GOAT running with an empty list rather than
      * refusing to start. Storage disables changes until the original file is repaired.
      *
-     * @param filePath relative path to the save file
+     * @param filePath relative path to the save file.
      */
     public Goat(String filePath) {
         this.ui = new Ui();
@@ -95,7 +95,7 @@ public class Goat {
     /**
      * Starts GOAT's text interface with the default save file.
      *
-     * @param args ignored
+     * @param args ignored.
      */
     public static void main(String[] args) {
         new Goat(DEFAULT_SAVE_PATH).run();
@@ -104,7 +104,7 @@ public class Goat {
     /**
      * Returns the opening message.
      *
-     * @return the greeting, as two lines
+     * @return the greeting, as two lines.
      */
     public String getGreeting() {
         return reply("Hello! I'm " + NAME, "What can I do for you?");
@@ -113,7 +113,7 @@ public class Goat {
     /**
      * Returns what happened when the save file was read.
      *
-     * @return the message to show, or an empty string if there is nothing worth saying
+     * @return the message to show, or an empty string if there is nothing worth saying.
      */
     public String getLoadOutcome() {
         if (loadingError != null) {
@@ -141,8 +141,8 @@ public class Goat {
      * Input GOAT refuses comes back as ordinary reply text rather than as an exception,
      * because both interfaces want to show the complaint and carry on rather than stop.
      *
-     * @param input one line as typed by the user
-     * @return the text to show in response
+     * @param input one line as typed by the user.
+     * @return the text to show in response.
      */
     public String getResponse(String input) {
         try {
@@ -151,19 +151,19 @@ public class Goat {
             String arguments = parsed.arguments();
 
             return switch (command) {
-                case BYE -> {
-                    isFinished = true;
-                    yield GOODBYE;
-                }
-                case LIST -> listTasks();
-                case MARK -> markTask(Parser.parseTaskNumber(arguments, command));
-                case UNMARK -> unmarkTask(Parser.parseTaskNumber(arguments, command));
-                case DELETE -> deleteTask(Parser.parseTaskNumber(arguments, command));
-                case ON -> listTasksOn(Parser.parseDate(arguments));
-                case FIND -> findTasks(Parser.parseKeyword(arguments));
-                case TODO -> addTask(Parser.parseTodo(arguments));
-                case DEADLINE -> addTask(Parser.parseDeadline(arguments));
-                case EVENT -> addTask(Parser.parseEvent(arguments));
+            case BYE -> {
+                isFinished = true;
+                yield GOODBYE;
+            }
+            case LIST -> listTasks();
+            case MARK -> markTask(Parser.parseTaskNumber(arguments, command));
+            case UNMARK -> unmarkTask(Parser.parseTaskNumber(arguments, command));
+            case DELETE -> deleteTask(Parser.parseTaskNumber(arguments, command));
+            case ON -> listTasksOn(Parser.parseDate(arguments));
+            case FIND -> findTasks(Parser.parseKeyword(arguments));
+            case TODO -> addTask(Parser.parseTodo(arguments));
+            case DEADLINE -> addTask(Parser.parseDeadline(arguments));
+            case EVENT -> addTask(Parser.parseEvent(arguments));
             };
         } catch (GoatException e) {
             return e.getMessage();
@@ -173,7 +173,7 @@ public class Goat {
     /**
      * Returns whether the conversation has been ended by a {@code bye}.
      *
-     * @return true once a bye has been handled
+     * @return true once a bye has been handled.
      */
     public boolean isFinished() {
         return isFinished;
@@ -187,8 +187,8 @@ public class Goat {
      * packed into an array first. Replies whose length depends on the task list build a
      * list and join that instead, since varargs would buy them nothing.
      *
-     * @param replyLines the lines, in the order they should appear
-     * @return the lines separated by newlines
+     * @param replyLines the lines, in the order they should appear.
+     * @return the lines separated by newlines.
      */
     private static String reply(String... replyLines) {
         return String.join("\n", replyLines);
@@ -197,9 +197,9 @@ public class Goat {
     /**
      * Stores a new task and confirms it, along with the new task count.
      *
-     * @param task the task to store
-     * @return the confirmation to show
-     * @throws GoatException if the updated list cannot be saved
+     * @param task the task to store.
+     * @return the confirmation to show.
+     * @throws GoatException if the updated list cannot be saved.
      */
     private String addTask(Task task) throws GoatException {
         assert task != null : "The parser returns a task or throws; it never returns null";
@@ -222,9 +222,9 @@ public class Goat {
     /**
      * Removes a task from the list and reports what was removed.
      *
-     * @param taskNumber the position shown by {@code list}, counting from 1
-     * @return the confirmation to show
-     * @throws GoatException if the updated list cannot be saved
+     * @param taskNumber the position shown by {@code list}, counting from 1.
+     * @return the confirmation to show.
+     * @throws GoatException if the updated list cannot be saved.
      */
     private String deleteTask(int taskNumber) throws GoatException {
         // delete() returns the removed element, so the confirmation can show the task
@@ -253,10 +253,10 @@ public class Goat {
      * The number itself was already checked by {@link Parser}; what is checked here is
      * whether it refers to a task that actually exists, which only the list can say.
      *
-     * @param taskNumber the position the user typed, counting from 1
-     * @param command the command being run, named in the error messages
-     * @return the matching zero-based index
-     * @throws GoatException if the list is empty or the number is out of range
+     * @param taskNumber the position the user typed, counting from 1.
+     * @param command the command being run, named in the error messages.
+     * @return the matching zero-based index.
+     * @throws GoatException if the list is empty or the number is out of range.
      */
     private int toIndex(int taskNumber, Command command) throws GoatException {
         if (tasks.isEmpty()) {
@@ -276,9 +276,9 @@ public class Goat {
     /**
      * Marks a task as done and echoes it back.
      *
-     * @param taskNumber the position shown by {@code list}, counting from 1
-     * @return the confirmation to show
-     * @throws GoatException if the updated list cannot be saved
+     * @param taskNumber the position shown by {@code list}, counting from 1.
+     * @return the confirmation to show.
+     * @throws GoatException if the updated list cannot be saved.
      */
     private String markTask(int taskNumber) throws GoatException {
         int index = toIndex(taskNumber, Command.MARK);
@@ -290,9 +290,9 @@ public class Goat {
     /**
      * Marks a task as not done and echoes it back.
      *
-     * @param taskNumber the position shown by {@code list}, counting from 1
-     * @return the confirmation to show
-     * @throws GoatException if the updated list cannot be saved
+     * @param taskNumber the position shown by {@code list}, counting from 1.
+     * @return the confirmation to show.
+     * @throws GoatException if the updated list cannot be saved.
      */
     private String unmarkTask(int taskNumber) throws GoatException {
         int index = toIndex(taskNumber, Command.UNMARK);
@@ -307,8 +307,8 @@ public class Goat {
      * A deadline matches when it is due that day; an event matches when the date lies
      * anywhere in its span. To-dos carry no date and so never match.
      *
-     * @param date the date to query
-     * @return the matching tasks, numbered, or a note that nothing is scheduled
+     * @param date the date to query.
+     * @return the matching tasks, numbered, or a note that nothing is scheduled.
      */
     private String listTasksOn(LocalDate date) {
         List<Task> matches = tasks.findOn(date);
@@ -322,8 +322,8 @@ public class Goat {
     /**
      * Lists the tasks whose description contains a keyword.
      *
-     * @param keyword the text the user is looking for
-     * @return the matching tasks, numbered, or a note that nothing matched
+     * @param keyword the text the user is looking for.
+     * @return the matching tasks, numbered, or a note that nothing matched.
      */
     private String findTasks(String keyword) {
         List<Task> matches = tasks.find(keyword);
@@ -337,7 +337,7 @@ public class Goat {
     /**
      * Lists every stored task, numbered from 1, with its completion status.
      *
-     * @return the tasks, numbered, under a heading
+     * @return the tasks, numbered, under a heading.
      */
     private String listTasks() {
         return numberedList("Here are the tasks in your list:", tasks.asList());
@@ -351,9 +351,9 @@ public class Goat {
      * Numbering from the loop counter also states the position directly, where building
      * it from the length of the lines so far only worked while the heading was present.
      *
-     * @param heading the line introducing the list
-     * @param tasksToShow the tasks to list, in the order they should appear
-     * @return the heading followed by one numbered task per line
+     * @param heading the line introducing the list.
+     * @param tasksToShow the tasks to list, in the order they should appear.
+     * @return the heading followed by one numbered task per line.
      */
     private static String numberedList(String heading, List<Task> tasksToShow) {
         List<String> lines = new ArrayList<>();

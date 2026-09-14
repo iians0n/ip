@@ -1,13 +1,13 @@
-/* Shared palette, so a colour change happens in one place. */
+/* Shared palette, so a color change happens in one place. */
 .root {
     -goat-ink: #22303f;
     -goat-muted: #8194a8;
     -goat-surface: #eef2f7;
-    -goat-accent: #3d7dff;
+    -goat-accent: #285ac5;
     -goat-accent-dark: #2b5fd0;
 
     -fx-background-color: -goat-surface;
-    -fx-font-family: "Helvetica Neue", "Segoe UI", sans-serif;
+    -fx-font-family: "System";
 }
 
 .scroll-pane {

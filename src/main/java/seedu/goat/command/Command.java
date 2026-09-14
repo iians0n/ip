@@ -62,9 +62,9 @@ public enum Command {
     /**
      * Finds the command matching a word typed by the user.
      *
-     * @param keyword the first word of the user's input
-     * @return the matching command
-     * @throws GoatException if the word is empty or matches no command
+     * @param keyword the first word of the user's input.
+     * @return the matching command.
+     * @throws GoatException if the word is empty or matches no command.
      */
     public static Command fromKeyword(String keyword) throws GoatException {
         for (Command command : values()) {
@@ -87,7 +87,7 @@ public enum Command {
      * Building this from {@link #values()} means adding a constant above automatically
      * updates the help text, so the two can never fall out of step.
      *
-     * @return the keywords separated by commas
+     * @return the keywords separated by commas.
      */
     private static String keywordList() {
         return Arrays.stream(values())

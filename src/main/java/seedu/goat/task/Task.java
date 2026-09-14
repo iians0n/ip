@@ -24,7 +24,7 @@ public abstract class Task {
     /**
      * Creates a task that starts out not done.
      *
-     * @param description what the user wants to do
+     * @param description what the user wants to do.
      */
     public Task(String description) {
         assert description != null && !description.isBlank() : "Blank descriptions are rejected first";
@@ -63,7 +63,7 @@ public abstract class Task {
     /**
      * Returns the completion marker shown in listings.
      *
-     * @return {@code [X]} if this task is done, {@code [ ]} otherwise
+     * @return {@code [X]} if this task is done, {@code [ ]} otherwise.
      */
     public String getStatusIcon() {
         return isDone ? "[X]" : "[ ]";
@@ -75,8 +75,8 @@ public abstract class Task {
      * A plain task carries no date, so the base answer is no. Subclasses that do carry
      * dates override this, which keeps callers from having to test a task's type.
      *
-     * @param date the date being asked about
-     * @return true if this task falls on that date
+     * @param date the date being asked about.
+     * @return true if this task falls on that date.
      */
     public boolean isOn(LocalDate date) {
         return false;
@@ -86,10 +86,10 @@ public abstract class Task {
      * Returns whether this task's description contains a keyword.
      * <p>
      * Matching is case insensitive, because a user searching for a word should not have
-     * to remember how they capitalised it when adding the task.
+     * to remember how they capitalized it when adding the task.
      *
-     * @param keyword the text to look for
-     * @return true if the description contains the keyword
+     * @param keyword the text to look for.
+     * @return true if the description contains the keyword.
      */
     public boolean hasKeyword(String keyword) {
         return description.toLowerCase(Locale.ROOT).contains(keyword.toLowerCase(Locale.ROOT));
@@ -99,14 +99,14 @@ public abstract class Task {
      * Returns whether another task duplicates this one.
      * <p>
      * Two tasks match when they are the same kind of task and describe the same thing.
-     * Descriptions are compared with spacing and capitalisation set aside, so that
-     * "Read  Book" is recognised as the task the user already has. Subclasses that
+     * Descriptions are compared with spacing and capitalization set aside, so that
+     * "Read  Book" is recognized as the task the user already has. Subclasses that
      * carry dates narrow this further, since the same words on a different day are a
      * different commitment. Completion is not consulted: having finished a task does
      * not entitle the list to hold a second copy of it.
      *
-     * @param other the task to compare against, never null
-     * @return true if the two tasks are duplicates of one another
+     * @param other the task to compare against, never null.
+     * @return true if the two tasks are duplicates of one another.
      */
     public boolean isDuplicateOf(Task other) {
         assert other != null : "Callers compare against tasks already in the list";
@@ -117,8 +117,8 @@ public abstract class Task {
     /**
      * Returns a description reduced to the form used for comparing two of them.
      *
-     * @param text the description as the user typed it
-     * @return the description trimmed, with runs of spaces collapsed, in lower case
+     * @param text the description as the user typed it.
+     * @return the description trimmed, with runs of spaces collapsed, in lower case.
      */
     private static String normalize(String text) {
         return text.trim().replaceAll("\\s+", " ").toLowerCase(Locale.ROOT);
@@ -127,7 +127,7 @@ public abstract class Task {
     /**
      * Returns the completion flag as it is written to the save file.
      *
-     * @return {@code "1"} if this task is done, {@code "0"} otherwise
+     * @return {@code "1"} if this task is done, {@code "0"} otherwise.
      */
     protected String getFileStatus() {
         return isDone ? "1" : "0";

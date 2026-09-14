@@ -5,7 +5,6 @@ import java.io.IOException;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
-import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 
@@ -30,7 +29,6 @@ public class Main extends Application {
             loader.<MainWindow>getController().setGoat(goat);
 
             stage.setTitle("GOAT");
-            stage.getIcons().add(new Image(Main.class.getResourceAsStream("/images/DaGoat.png")));
             stage.setScene(new Scene(root));
 
             // Below this size the send button starts crowding out the text field.

@@ -32,8 +32,8 @@ public class DateFormats {
      * through exactly the same format it was written in.
      *
      * @param text the date as typed or as stored, such as {@code 2019-10-15}
-     * @return the parsed date
-     * @throws GoatException if the text is not a valid ISO date
+     * @return the parsed date.
+     * @throws GoatException if the text is not a valid ISO date.
      */
     public static LocalDate parse(String text) throws GoatException {
         try {
@@ -47,7 +47,7 @@ public class DateFormats {
     /**
      * Renders a date for display.
      *
-     * @param date the date to show
+     * @param date the date to show.
      * @return the date as {@code MMM dd yyyy}, such as {@code Oct 15 2019}
      */
     public static String format(LocalDate date) {

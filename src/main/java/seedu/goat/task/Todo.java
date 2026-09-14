@@ -8,7 +8,7 @@ public class Todo extends Task {
     /**
      * Creates a to-do that starts out not done.
      *
-     * @param description what the user wants to do
+     * @param description what the user wants to do.
      */
     public Todo(String description) {
         super(description);

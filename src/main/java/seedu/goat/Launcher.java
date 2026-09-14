@@ -19,7 +19,7 @@ public class Launcher {
     /**
      * Opens the chat window.
      *
-     * @param args ignored
+     * @param args ignored.
      */
     public static void main(String[] args) {
         Application.launch(Main.class, args);

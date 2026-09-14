@@ -17,12 +17,12 @@ public class Ui {
 
     /** ASCII-art banner shown once at startup. */
     private static final String BANNER = """
-  ____   ___      _     _____
- / ___| / _ \\    / \\   |_   _|
-| |  _ | | | |  / _ \\    | |
-| |_| || |_| | / ___ \\   | |
- \\____| \\___/ /_/   \\_\\  |_|
-""";
+              ____   ___      _     _____
+             / ___| / _ \\    / \\   |_   _|
+            | |  _ | | | |  / _ \\    | |
+            | |_| || |_| | / ___ \\   | |
+             \\____| \\___/ /_/   \\_\\  |_|
+            """;
 
     /** Reads the user's commands from standard input. */
     private final Scanner scanner;
@@ -43,7 +43,7 @@ public class Ui {
      * False at end of input, so piped input and Ctrl-D end the conversation cleanly
      * rather than looping forever.
      *
-     * @return true if another line can be read
+     * @return true if another line can be read.
      */
     public boolean hasNextCommand() {
         return scanner.hasNextLine();
@@ -52,7 +52,7 @@ public class Ui {
     /**
      * Reads the next command, with surrounding whitespace removed.
      *
-     * @return the line the user typed, trimmed
+     * @return the line the user typed, trimmed.
      */
     public String readCommand() {
         return scanner.nextLine().trim();
@@ -64,7 +64,7 @@ public class Ui {
      * Each message is split on its newlines so that a reply built elsewhere as a single
      * block of text is indented line by line, rather than only on its first line.
      *
-     * @param messages parts of the reply, printed in order
+     * @param messages parts of the reply, printed in order.
      */
     public void show(String... messages) {
         System.out.println(LINE);

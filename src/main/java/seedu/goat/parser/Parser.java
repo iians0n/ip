@@ -33,8 +33,8 @@ public class Parser {
     /**
      * A command together with the text that followed it.
      *
-     * @param command what the user asked for
-     * @param arguments the rest of the line, trimmed, empty if there was none
+     * @param command what the user asked for.
+     * @param arguments the rest of the line, trimmed, empty if there was none.
      */
     public record ParsedCommand(Command command, String arguments) {
     }
@@ -46,9 +46,9 @@ public class Parser {
     /**
      * Splits a line into its command and the arguments after it.
      *
-     * @param input one line as typed
-     * @return the command and its arguments
-     * @throws GoatException if the first word matches no known command
+     * @param input one line as typed.
+     * @return the command and its arguments.
+     * @throws GoatException if the first word matches no known command.
      */
     public static ParsedCommand parse(String input) throws GoatException {
         if (input == null || input.isBlank()) {
@@ -72,10 +72,10 @@ public class Parser {
      * Only checks that a number was supplied and that it is a number. Whether it refers
      * to an existing task depends on the list, so the caller checks that.
      *
-     * @param arguments text following the command
-     * @param command the command being run, named in the error messages
-     * @return the number the user typed, counting from 1
-     * @throws GoatException if the number is missing or is not a number
+     * @param arguments text following the command.
+     * @param command the command being run, named in the error messages.
+     * @return the number the user typed, counting from 1.
+     * @throws GoatException if the number is missing or is not a number.
      */
     public static int parseTaskNumber(String arguments, Command command)
             throws GoatException {
@@ -96,9 +96,9 @@ public class Parser {
     /**
      * Reads the date given to the {@code on} command.
      *
-     * @param arguments the date as typed
-     * @return the parsed date
-     * @throws GoatException if the date is missing or cannot be read
+     * @param arguments the date as typed.
+     * @return the parsed date.
+     * @throws GoatException if the date is missing or cannot be read.
      */
     public static LocalDate parseDate(String arguments) throws GoatException {
         if (arguments.isBlank()) {
@@ -110,9 +110,9 @@ public class Parser {
     /**
      * Reads the keyword given to the {@code find} command.
      *
-     * @param arguments the keyword as typed
-     * @return the keyword to search for
-     * @throws GoatException if no keyword was given
+     * @param arguments the keyword as typed.
+     * @return the keyword to search for.
+     * @throws GoatException if no keyword was given.
      */
     public static String parseKeyword(String arguments) throws GoatException {
         if (arguments.isBlank()) {
@@ -125,9 +125,9 @@ public class Parser {
     /**
      * Builds a to-do from the text following the {@code todo} command.
      *
-     * @param arguments the description
-     * @return the parsed to-do
-     * @throws GoatException if the description is missing
+     * @param arguments the description.
+     * @return the parsed to-do.
+     * @throws GoatException if the description is missing.
      */
     public static Todo parseTodo(String arguments) throws GoatException {
         if (arguments.isBlank()) {
@@ -141,8 +141,8 @@ public class Parser {
      * Builds a deadline from the text following the {@code deadline} command.
      *
      * @param arguments text of the form {@code DESCRIPTION /by WHEN}
-     * @return the parsed deadline
-     * @throws GoatException if the description, the {@code /by}, or the date is missing
+     * @return the parsed deadline.
+     * @throws GoatException if the description, the {@code /by}, or the date is missing.
      */
     public static Deadline parseDeadline(String arguments) throws GoatException {
         String example = "\"deadline return book /by 2019-12-02\"";
@@ -169,8 +169,8 @@ public class Parser {
      * Builds an event from the text following the {@code event} command.
      *
      * @param arguments text of the form {@code DESCRIPTION /from START /to END}
-     * @return the parsed event
-     * @throws GoatException if a part is missing, unreadable, or the dates are reversed
+     * @return the parsed event.
+     * @throws GoatException if a part is missing, unreadable, or the dates are reversed.
      */
     public static Event parseEvent(String arguments) throws GoatException {
         String example = "\"event project meeting /from 2019-10-15 /to 2019-10-16\"";

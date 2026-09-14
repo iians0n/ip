@@ -26,7 +26,7 @@ public class TaskList {
      * empty list and calling {@link #add(Task)} once per task. {@code new TaskList()}
      * still reads the same and simply passes no tasks.
      *
-     * @param tasks the tasks to start with, in order
+     * @param tasks the tasks to start with, in order.
      */
     public TaskList(Task... tasks) {
         this.tasks = new ArrayList<>(List.of(tasks));
@@ -39,7 +39,7 @@ public class TaskList {
      * list whose length it cannot know when the code is written. The tasks are copied,
      * so later changes to this list do not disturb the caller's.
      *
-     * @param tasks the tasks to start with, in order
+     * @param tasks the tasks to start with, in order.
      */
     public TaskList(List<Task> tasks) {
         this.tasks = new ArrayList<>(tasks);
@@ -48,7 +48,7 @@ public class TaskList {
     /**
      * Adds a task to the end of the list.
      *
-     * @param task the task to add
+     * @param task the task to add.
      */
     public void add(Task task) {
         assert task != null : "A null task would break every later listing";
@@ -58,8 +58,8 @@ public class TaskList {
     /**
      * Removes the task at a position and returns it.
      *
-     * @param index zero-based position in the list
-     * @return the task that was removed
+     * @param index zero-based position in the list.
+     * @return the task that was removed.
      */
     public Task delete(int index) {
         assert index >= 0 && index < tasks.size() : "Callers check the position before deleting";
@@ -69,8 +69,8 @@ public class TaskList {
     /**
      * Returns the task at a position without removing it.
      *
-     * @param index zero-based position in the list
-     * @return the task at that position
+     * @param index zero-based position in the list.
+     * @return the task at that position.
      */
     public Task get(int index) {
         assert index >= 0 && index < tasks.size() : "Callers check the position before reading";
@@ -80,7 +80,7 @@ public class TaskList {
     /**
      * Returns how many tasks are held.
      *
-     * @return the number of tasks
+     * @return the number of tasks.
      */
     public int size() {
         return tasks.size();
@@ -89,7 +89,7 @@ public class TaskList {
     /**
      * Returns whether there are no tasks.
      *
-     * @return true if the list is empty
+     * @return true if the list is empty.
      */
     public boolean isEmpty() {
         return tasks.isEmpty();
@@ -101,8 +101,8 @@ public class TaskList {
      * Each task decides for itself whether it matches, so this method needs no knowledge
      * of the different kinds of task.
      *
-     * @param date the date being asked about
-     * @return the matching tasks, empty if none match
+     * @param date the date being asked about.
+     * @return the matching tasks, empty if none match.
      */
     public List<Task> findOn(LocalDate date) {
         assert date != null : "A date is parsed before the list is searched";
@@ -117,8 +117,8 @@ public class TaskList {
      * Each task decides for itself whether it matches, so this method needs no access to
      * the description and no knowledge of the different kinds of task.
      *
-     * @param keyword the text to look for
-     * @return the matching tasks, empty if none match
+     * @param keyword the text to look for.
+     * @return the matching tasks, empty if none match.
      */
     public List<Task> find(String keyword) {
         assert keyword != null : "The parser rejects a missing keyword before the search";
@@ -133,8 +133,8 @@ public class TaskList {
      * The position is returned rather than a plain yes or no so that the caller can name
      * the offending task back to the user, who then knows which entry to look at.
      *
-     * @param candidate the task the user is trying to add
-     * @return the zero-based position of the first duplicate, or -1 if there is none
+     * @param candidate the task the user is trying to add.
+     * @return the zero-based position of the first duplicate, or -1 if there is none.
      */
     public int indexOfDuplicate(Task candidate) {
         assert candidate != null : "The parser builds a task before it is checked";
@@ -147,7 +147,7 @@ public class TaskList {
     /**
      * Returns a read-only view of the tasks, for callers that only need to walk them.
      *
-     * @return the tasks in list order
+     * @return the tasks in list order.
      */
     public List<Task> asList() {
         return Collections.unmodifiableList(tasks);

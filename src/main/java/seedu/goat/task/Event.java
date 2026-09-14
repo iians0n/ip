@@ -19,9 +19,9 @@ public class Event extends Task {
     /**
      * Creates an event that starts out not done.
      *
-     * @param description what the event is
-     * @param from the date it starts
-     * @param to the date it ends
+     * @param description what the event is.
+     * @param from the date it starts.
+     * @param to the date it ends.
      */
     public Event(String description, LocalDate from, LocalDate to) {
         super(description);
@@ -32,8 +32,8 @@ public class Event extends Task {
     /**
      * Returns whether this event is running on a given date.
      *
-     * @param date the date to test
-     * @return true if the date falls within the event, endpoints included
+     * @param date the date to test.
+     * @return true if the date falls within the event, endpoints included.
      */
     @Override
     public boolean isOn(LocalDate date) {

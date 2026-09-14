@@ -10,13 +10,10 @@ import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
-import javafx.scene.shape.Circle;
 
 /**
- * One line of the conversation: a message beside the speaker's avatar.
+ * One line of the conversation: a message beside the speaker's label.
  * <p>
  * Both speakers share this class and differ only in which side they sit on, so the two
  * halves of the transcript can never drift apart in wording or spacing.
@@ -27,17 +24,17 @@ public class DialogBox extends HBox {
     @FXML
     private Label dialog;
 
-    /** The speaker's avatar. */
+    /** The speaker's label. */
     @FXML
-    private ImageView displayPicture;
+    private Label speaker;
 
     /**
-     * Creates a box showing a message beside an avatar, laid out for the user's side.
+     * Creates a box showing a message beside a name, laid out for the user's side.
      *
-     * @param message the text to show
-     * @param avatar the speaker's picture
+     * @param message the text to show.
+     * @param speakerName the name displayed beside the message.
      */
-    private DialogBox(String message, Image avatar) {
+    private DialogBox(String message, String speakerName) {
         try {
             // This class is both the root and the controller of its own FXML, which is
             // what lets a DialogBox be constructed and added like any other node.
@@ -46,43 +43,39 @@ public class DialogBox extends HBox {
             loader.setRoot(this);
             loader.load();
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new IllegalStateException("Cannot load the packaged dialog layout", e);
         }
 
         dialog.setText(message);
-        displayPicture.setImage(avatar);
-
-        // Clipping to a circle inscribed in the image turns a square picture round.
-        double radius = displayPicture.getFitWidth() / 2;
-        displayPicture.setClip(new Circle(radius, radius, radius));
+        speaker.setText(speakerName);
     }
 
     /**
-     * Returns a box showing one of the user's messages, avatar on the right.
+     * Returns a box showing one of the user's messages, name on the right.
      *
-     * @param message the text to show
-     * @param avatar the user's picture
-     * @return the box to add to the transcript
+     * @param message the text to show.
+     * @param speakerName the user label.
+     * @return the box to add to the transcript.
      */
-    public static DialogBox getUserDialog(String message, Image avatar) {
-        return new DialogBox(message, avatar);
+    public static DialogBox getUserDialog(String message, String speakerName) {
+        return new DialogBox(message, speakerName);
     }
 
     /**
-     * Returns a box showing one of GOAT's replies, avatar on the left.
+     * Returns a box showing one of GOAT's replies, name on the left.
      *
-     * @param message the text to show
-     * @param avatar GOAT's picture
-     * @return the box to add to the transcript
+     * @param message the text to show.
+     * @param speakerName the chatbot label.
+     * @return the box to add to the transcript.
      */
-    public static DialogBox getGoatDialog(String message, Image avatar) {
-        DialogBox box = new DialogBox(message, avatar);
+    public static DialogBox getGoatDialog(String message, String speakerName) {
+        DialogBox box = new DialogBox(message, speakerName);
         box.flip();
         return box;
     }
 
     /**
-     * Moves the avatar to the left, so GOAT's replies sit on the opposite side of the
+     * Moves the name to the left, so GOAT's replies sit on the opposite side of the
      * window from the user's messages.
      */
     private void flip() {

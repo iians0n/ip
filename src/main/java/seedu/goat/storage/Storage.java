@@ -71,8 +71,8 @@ public class Storage {
      * lines that cannot be decoded are skipped rather than aborting the whole load, so
      * one damaged line cannot cost the user the rest of their list.
      *
-     * @return the saved tasks in file order, or an empty list if there is no save file
-     * @throws GoatException if the file exists but cannot be read at all
+     * @return the saved tasks in file order, or an empty list if there is no save file.
+     * @throws GoatException if the file exists but cannot be read at all.
      */
     public List<Task> load() throws GoatException {
         List<Task> tasks = new ArrayList<>();
@@ -113,7 +113,7 @@ public class Storage {
     /**
      * Returns how many unreadable lines the most recent load skipped.
      *
-     * @return the number of skipped lines, or zero if the file was wholly readable
+     * @return the number of skipped lines, or zero if the file was wholly readable.
      */
     public int getSkippedLineCount() {
         return skippedLineCount;
@@ -123,8 +123,8 @@ public class Storage {
      * Rebuilds one task from its encoded line.
      *
      * @param line a line produced by {@link Task#toFileString()}
-     * @return the decoded task
-     * @throws GoatException if the line is malformed in any way
+     * @return the decoded task.
+     * @throws GoatException if the line is malformed in any way.
      */
     private static Task parseLine(String line) throws GoatException {
         // The separator is escaped because split() takes a regular expression, in which
@@ -144,32 +144,32 @@ public class Storage {
         }
 
         int expected = switch (type) {
-            case "T" -> SHARED_FIELD_COUNT;
-            case "D" -> DEADLINE_FIELD_COUNT;
-            case "E" -> EVENT_FIELD_COUNT;
-            default -> throw new GoatException("unknown task type " + type);
+        case "T" -> SHARED_FIELD_COUNT;
+        case "D" -> DEADLINE_FIELD_COUNT;
+        case "E" -> EVENT_FIELD_COUNT;
+        default -> throw new GoatException("unknown task type " + type);
         };
         if (parts.length != expected) {
             throw new GoatException("unexpected number of fields");
         }
         Task task = switch (type) {
-            case "T" -> new Todo(description);
-            case "D" -> {
-                requireFieldCount(parts, DEADLINE_FIELD_COUNT);
-                yield new Deadline(description, DateFormats.parse(parts[3]));
+        case "T" -> new Todo(description);
+        case "D" -> {
+            requireFieldCount(parts, DEADLINE_FIELD_COUNT);
+            yield new Deadline(description, DateFormats.parse(parts[3]));
+        }
+        case "E" -> {
+            requireFieldCount(parts, EVENT_FIELD_COUNT);
+            var start = DateFormats.parse(parts[3]);
+            var end = DateFormats.parse(parts[4]);
+            if (end.isBefore(start)) {
+                throw new GoatException("event ends before it starts");
             }
-            case "E" -> {
-                requireFieldCount(parts, EVENT_FIELD_COUNT);
-                var start = DateFormats.parse(parts[3]);
-                var end = DateFormats.parse(parts[4]);
-                if (end.isBefore(start)) {
-                    throw new GoatException("event ends before it starts");
-                }
-                yield new Event(description, start, end);
-            }
-            // Without this the decoder would guess, and an unrecognised letter would be
-            // silently turned into some other kind of task.
-            default -> throw new GoatException("unknown task type " + type);
+            yield new Event(description, start, end);
+        }
+        // Without this the decoder would guess, and an unrecognized letter would be
+        // silently turned into some other kind of task.
+        default -> throw new GoatException("unknown task type " + type);
         };
 
         if (status.equals(STATUS_DONE)) {
@@ -181,9 +181,9 @@ public class Storage {
     /**
      * Checks that an encoded line carried enough fields to decode.
      *
-     * @param parts the fields split out of the line
-     * @param required how many fields this kind of task needs
-     * @throws GoatException if there are too few fields, or any required one is blank
+     * @param parts the fields split out of the line.
+     * @param required how many fields this kind of task needs.
+     * @throws GoatException if there are too few fields, or any required one is blank.
      */
     private static void requireFieldCount(String[] parts, int required)
             throws GoatException {
@@ -204,8 +204,8 @@ public class Storage {
      * Rewriting the entire file on every change is far simpler than editing a line in
      * place, and the file is small enough that the cost does not matter.
      *
-     * @param tasks the tasks to save, in list order
-     * @throws GoatException if the file cannot be written
+     * @param tasks the tasks to save, in list order.
+     * @throws GoatException if the file cannot be written.
      */
     public void save(List<Task> tasks) throws GoatException {
         assert tasks != null : "The caller always holds a list, even an empty one";

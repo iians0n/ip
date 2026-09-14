@@ -1,5 +1,5 @@
 .dialog-box {
-    -bubble-sent: #3d7dff;
+    -bubble-sent: #285ac5;
     -bubble-received: #ffffff;
     -bubble-received-text: #22303f;
 
@@ -8,7 +8,7 @@
 }
 
 /* The user's own messages. */
-.dialog-box .label {
+.dialog-box #dialog {
     -fx-background-color: -bubble-sent;
     -fx-background-radius: 16 16 2 16;
     -fx-text-fill: white;
@@ -16,16 +16,17 @@
     -fx-font-size: 13px;
 }
 
-/* GOAT's replies sit on the other side, so the tail corner flips with them. Task
-   listings line up only in a fixed-width font, so replies use one. */
-.dialog-box .reply-label {
+/* GOAT's replies sit on the other side, so the tail corner flips with them. */
+.dialog-box #dialog.reply-label {
     -fx-background-color: -bubble-received;
     -fx-background-radius: 16 16 16 2;
     -fx-text-fill: -bubble-received-text;
-    -fx-font-family: "Menlo", "Consolas", monospace;
-    -fx-font-size: 12px;
+    -fx-font-size: 13px;
 }
 
-.display-picture {
-    -fx-effect: dropshadow(gaussian, rgba(34, 48, 63, 0.35), 8, 0.0, 0, 3);
+.dialog-box .speaker {
+    -fx-text-fill: #40536b;
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+    -fx-padding: 12 0 0 0;
 }

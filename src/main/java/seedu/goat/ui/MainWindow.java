@@ -6,7 +6,6 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
-import javafx.scene.image.Image;
 import javafx.scene.layout.VBox;
 import javafx.util.Duration;
 
@@ -43,14 +42,6 @@ public class MainWindow {
     /** The chatbot answering in this window. */
     private Goat goat;
 
-    /** The picture shown beside the user's own messages. */
-    private final Image userImage =
-            new Image(this.getClass().getResourceAsStream("/images/DaUser.png"));
-
-    /** The picture shown beside GOAT's replies. */
-    private final Image goatImage =
-            new Image(this.getClass().getResourceAsStream("/images/DaGoat.png"));
-
     /**
      * Ties the scroll position to the height of the transcript.
      * <p>
@@ -66,7 +57,7 @@ public class MainWindow {
     /**
      * Attaches the chatbot and shows its opening messages.
      *
-     * @param goat the chatbot this window talks to
+     * @param goat the chatbot this window talks to.
      */
     public void setGoat(Goat goat) {
         this.goat = goat;
@@ -90,7 +81,7 @@ public class MainWindow {
             return;
         }
 
-        dialogContainer.getChildren().add(DialogBox.getUserDialog(input, userImage));
+        dialogContainer.getChildren().add(DialogBox.getUserDialog(input, "You"));
         addGoatDialog(goat.getResponse(input));
         userInput.clear();
 
@@ -102,10 +93,10 @@ public class MainWindow {
     /**
      * Adds one of GOAT's replies to the transcript.
      *
-     * @param message the reply text
+     * @param message the reply text.
      */
     private void addGoatDialog(String message) {
-        dialogContainer.getChildren().add(DialogBox.getGoatDialog(message, goatImage));
+        dialogContainer.getChildren().add(DialogBox.getGoatDialog(message, "GOAT"));
     }
 
     /**

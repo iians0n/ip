@@ -16,8 +16,8 @@ public class Deadline extends Task {
     /**
      * Creates a deadline that starts out not done.
      *
-     * @param description what the user wants to do
-     * @param by the date it is due
+     * @param description what the user wants to do.
+     * @param by the date it is due.
      */
     public Deadline(String description, LocalDate by) {
         super(description);
