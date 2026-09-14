@@ -58,4 +58,12 @@ public class DateFormatsTest {
         // The stored form is what parse() reads, so it must survive a round trip.
         assertEquals(parsed, DateFormats.parse(parsed.toString()));
     }
+    @Test
+    public void parse_leapYearBoundaries_strictValidation() throws GoatException {
+        assertEquals(LocalDate.of(2024, 2, 29), DateFormats.parse("2024-02-29"));
+        for (String date : new String[]{"2026-02-29", "2026-04-31", "2026-13-01", "2026-00-01",
+                "2026-01-00", "2026-9-18", "18/09/2026", "2026-09-18T12:00"}) {
+            assertThrows(GoatException.class, () -> DateFormats.parse(date), date);
+        }
+    }
 }

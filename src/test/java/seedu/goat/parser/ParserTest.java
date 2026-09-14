@@ -189,4 +189,27 @@ public class ParserTest {
     public void parseDate_missingDate_exceptionThrown() {
         assertThrows(GoatException.class, () -> Parser.parseDate(""));
     }
+    @Test
+    public void parse_repeatedParameters_exceptionThrown() {
+        assertThrows(GoatException.class,
+                () -> Parser.parseDeadline("book /by 2026-09-18 /by 2026-09-19"));
+        assertThrows(GoatException.class,
+                () -> Parser.parseEvent("trip /from 2026-09-18 /from 2026-09-19 /to 2026-09-20"));
+        assertThrows(GoatException.class,
+                () -> Parser.parseEvent("trip /to 2026-09-20 /from 2026-09-18 /to 2026-09-20"));
+    }
+
+    @Test
+    public void parseEvent_emptyDates_exceptionThrown() {
+        assertThrows(GoatException.class, () -> Parser.parseEvent("trip /from /to 2026-09-18"));
+        assertThrows(GoatException.class, () -> Parser.parseEvent("trip /from 2026-09-18 /to"));
+    }
+
+    @Test
+    public void parse_whitespaceAndExtraArguments_validated() throws GoatException {
+        assertEquals("read book", Parser.parse(" \ttodo\t read book ").arguments());
+        assertThrows(GoatException.class, () -> Parser.parse("list extra"));
+        assertThrows(GoatException.class, () -> Parser.parse("bye extra"));
+        assertThrows(GoatException.class, () -> Parser.parse("todo one\ntodo two"));
+    }
 }

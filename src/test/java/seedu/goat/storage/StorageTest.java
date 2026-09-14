@@ -1,6 +1,7 @@
 package seedu.goat.storage;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
@@ -163,5 +164,46 @@ public class StorageTest {
         storage.load();
         assertEquals(0, storage.getSkippedLineCount(),
                 "a clean load must not report the previous load's damage");
+    }
+    @Test
+    public void load_extraFieldsAndReversedRanges_preservesOriginal() throws Exception {
+        Path file = tempDir.resolve("goat.txt");
+        String original = "T | 0 | task | extra\nE | 0 | trip | 2026-09-19 | 2026-09-18\n";
+        Files.writeString(file, original);
+        Storage storage = storageFor("goat.txt");
+        assertTrue(storage.load().isEmpty());
+        assertEquals(2, storage.getSkippedLineCount());
+        assertThrows(GoatException.class, () -> storage.save(List.of(new Todo("new"))));
+        assertEquals(original, Files.readString(file));
+    }
+
+    @Test
+    public void save_parentIsFile_reportsFailureAndPreservesFile() throws Exception {
+        Files.writeString(tempDir.resolve("parent"), "keep me");
+        Storage storage = storageFor("parent/goat.txt");
+        assertThrows(GoatException.class, () -> storage.save(List.of(new Todo("new"))));
+        assertEquals("keep me", Files.readString(tempDir.resolve("parent")));
+    }
+
+    @Test
+    public void load_invalidUtf8_disablesSaving() throws Exception {
+        Path file = tempDir.resolve("goat.txt");
+        byte[] original = {(byte) 0xc3, (byte) 0x28};
+        Files.write(file, original);
+        Storage storage = storageFor("goat.txt");
+        assertThrows(GoatException.class, storage::load);
+        assertThrows(GoatException.class, () -> storage.save(List.of()));
+        assertEquals(2, Files.size(file));
+    }
+
+    @Test
+    public void load_legacyDuplicatesAndSingleDayEvents_preserved() throws Exception {
+        Path file = tempDir.resolve("goat.txt");
+        Files.writeString(file, "T | 0 | task\nT | 1 | task\nE | 0 | day | 2026-09-18 | 2026-09-18\n");
+        Storage storage = storageFor("goat.txt");
+        assertEquals(3, storage.load().size());
+        assertEquals(0, storage.getSkippedLineCount());
+        storage.save(storage.load());
+        assertEquals(3, storage.load().size());
     }
 }
