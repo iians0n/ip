@@ -147,7 +147,9 @@ The JavaFX launcher, FXML layout and dialog pattern follow the
 Course material reuse is exempt from per-block attribution under the course
 policy; no external code snippets were copied during this Week 6 update.
 The earlier avatar photographs had no recorded source/license and have been
-removed from the current product. The speaker labels use text. The redesigned header includes an original
-geometric goat drawn with JavaFX SVGPath; no external artwork is bundled.
+removed from the current product. Speakers are distinguished by alignment and announced to assistive tools. The cute goat mascot in
+`src/main/resources/images/goat-mascot.png` was generated with OpenAI image
+generation through Codex for this project at the owner's request. It is
+bundled with the app and paired with a warm cream-and-ember theme.
 The dark header and composer arrangement was inspired by a friend's CHOO iP
 screenshot supplied by the owner. Its artwork and code were not copied.

@@ -5,6 +5,30 @@ Audit date: 14 September 2026. Product: **GOAT**. Fork:
 The working tree was clean at the start, at `69df496`. No existing branches,
 public tags, or historical commits were rewritten or deleted.
 
+## Cream-and-ember theme — 15 September 2026 (v0.5)
+
+The owner's final choice is a warm cream background with ember-orange
+accents, peach user messages and dark brown text. A cute generated goat
+mascot replaces the geometric mark. The transparent PNG is bundled in the
+JAR and its OpenAI image-generation origin is credited in the root README.
+Repeated visible speaker labels were removed for a cleaner layout; the
+speaker is still included in each message's accessible text. Typography
+and spacing are larger, with subtle warm borders and a rounded composer.
+
+A clean Java 25 build, all 99 JUnit tests, Checkstyle and isolated final-JAR
+command/persistence smoke tests passed. The final JAR launched on macOS
+with Zulu FX Java 25.0.3. The mascot, restored tasks, Enter input and
+accessible speaker text were verified. Send was checked on the preceding
+ember layout using the unchanged controller. `docs/Ui.png` is an unaltered
+full-window capture of the final light-theme JAR. Existing task behavior
+and the tested resize layout remain unchanged. Native scroll/drag testing
+has the automation limitation documented below.
+
+Intended release: v0.5, one `goat.jar` asset (11,947,131 bytes).
+SHA-256: `f4b440d6dace6754a7461d60b8ea377d33d12925372e330d90f763906eb7c3bc`.
+The published-release workflow records Windows/Linux startup and command
+checks; consult its latest run for the exact release tested.
+
 ## UI refresh — 15 September 2026 (v0.4)
 
 The final UI now uses a forest-green theme, lime accents, an original vector

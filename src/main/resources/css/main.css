@@ -1,41 +1,33 @@
-/* GOAT's forest palette is shared by the header, transcript, and composer. */
+/* GOAT's cream-and-ember palette is shared by the header, transcript, and composer. */
 .root {
-    -goat-ink: #edf4ee;
-    -goat-muted: #9bada5;
-    -goat-surface: #101b19;
-    -goat-accent: #b9e781;
+    -goat-ink: #3d2c23;
+    -goat-muted: #806b5e;
+    -goat-surface: #fff8ef;
+    -goat-accent: #f5a35c;
     -fx-background-color: -goat-surface;
     -fx-font-family: "System";
     -fx-font-size: 13px;
 }
 
 .brand-header {
-    -fx-background-color: #162420;
-    -fx-padding: 16 22;
-    -fx-border-color: #2a3a33;
+    -fx-background-color: #fffdf8;
+    -fx-padding: 14 22;
+    -fx-border-color: #eadccb;
     -fx-border-width: 0 0 1 0;
 }
 
 .brand-mark {
-    -fx-background-color: #263d30;
-    -fx-background-radius: 15;
-    -fx-border-color: #40573b;
-    -fx-border-radius: 15;
-}
-
-.goat-symbol {
-    -fx-fill: -goat-accent;
-    -fx-fill-rule: even-odd;
+    -fx-background-color: transparent;
 }
 
 .brand-title {
     -fx-text-fill: -goat-ink;
-    -fx-font-size: 23px;
+    -fx-font-size: 24px;
     -fx-font-weight: bold;
 }
 
 .brand-subtitle {
-    -fx-text-fill: #bbcabf;
+    -fx-text-fill: #80614e;
     -fx-font-size: 12px;
 }
 
@@ -56,7 +48,7 @@
 }
 
 .scroll-bar:vertical .thumb {
-    -fx-background-color: #40554a;
+    -fx-background-color: #d4b99d;
     -fx-background-radius: 6;
 }
 
@@ -67,21 +59,21 @@
 }
 
 .composer {
-    -fx-background-color: #162420;
+    -fx-background-color: #fffdf8;
     -fx-padding: 14 18 12 18;
-    -fx-border-color: #2a3a33;
+    -fx-border-color: #eadccb;
     -fx-border-width: 1 0 0 0;
 }
 
 .text-field {
-    -fx-background-color: #101b19;
+    -fx-background-color: #fff8ef;
     -fx-background-radius: 11;
     -fx-border-radius: 11;
-    -fx-border-color: #4e6558;
+    -fx-border-color: #cdb396;
     -fx-padding: 0 13;
     -fx-text-fill: -goat-ink;
     -fx-prompt-text-fill: -goat-muted;
-    -fx-highlight-fill: #405d39;
+    -fx-highlight-fill: #f6c796;
 }
 
 .text-field:focused {
@@ -91,21 +83,21 @@
 .button {
     -fx-background-color: -goat-accent;
     -fx-background-radius: 11;
-    -fx-text-fill: #152318;
+    -fx-text-fill: #3e2411;
     -fx-font-weight: bold;
     -fx-cursor: hand;
 }
 
 .button:hover {
-    -fx-background-color: #caf29b;
+    -fx-background-color: #ffb574;
 }
 
 .button:pressed {
-    -fx-background-color: #9fcb68;
+    -fx-background-color: #e58b42;
 }
 
 .button:focused {
-    -fx-border-color: #edf4ee;
+    -fx-border-color: #3d2c23;
     -fx-border-radius: 11;
 }
 
