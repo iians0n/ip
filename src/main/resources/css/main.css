@@ -1,31 +1,62 @@
-/* Shared palette, so a color change happens in one place. */
+/* GOAT's forest palette is shared by the header, transcript, and composer. */
 .root {
-    -goat-ink: #22303f;
-    -goat-muted: #8194a8;
-    -goat-surface: #eef2f7;
-    -goat-accent: #285ac5;
-    -goat-accent-dark: #2b5fd0;
-
+    -goat-ink: #edf4ee;
+    -goat-muted: #9bada5;
+    -goat-surface: #101b19;
+    -goat-accent: #b9e781;
     -fx-background-color: -goat-surface;
     -fx-font-family: "System";
+    -fx-font-size: 13px;
 }
 
-.scroll-pane {
+.brand-header {
+    -fx-background-color: #162420;
+    -fx-padding: 16 22;
+    -fx-border-color: #2a3a33;
+    -fx-border-width: 0 0 1 0;
+}
+
+.brand-mark {
+    -fx-background-color: #263d30;
+    -fx-background-radius: 15;
+    -fx-border-color: #40573b;
+    -fx-border-radius: 15;
+}
+
+.goat-symbol {
+    -fx-fill: -goat-accent;
+    -fx-fill-rule: even-odd;
+}
+
+.brand-title {
+    -fx-text-fill: -goat-ink;
+    -fx-font-size: 23px;
+    -fx-font-weight: bold;
+}
+
+.brand-subtitle {
+    -fx-text-fill: #bbcabf;
+    -fx-font-size: 12px;
+}
+
+.transcript {
+    -fx-padding: 14 0;
+}
+
+.scroll-pane,
+.scroll-pane > .viewport {
     -fx-background-color: transparent;
     -fx-background-insets: 0;
     -fx-padding: 0;
 }
 
-.scroll-pane > .viewport {
-    -fx-background-color: transparent;
-}
-
 .scroll-bar:vertical {
     -fx-background-color: transparent;
+    -fx-pref-width: 8;
 }
 
 .scroll-bar:vertical .thumb {
-    -fx-background-color: derive(-goat-muted, 40%);
+    -fx-background-color: #40554a;
     -fx-background-radius: 6;
 }
 
@@ -35,35 +66,50 @@
     -fx-padding: 0;
 }
 
-.text-field {
-    -fx-background-color: white;
-    -fx-background-radius: 0;
-    -fx-border-color: derive(-goat-surface, -12%);
+.composer {
+    -fx-background-color: #162420;
+    -fx-padding: 14 18 12 18;
+    -fx-border-color: #2a3a33;
     -fx-border-width: 1 0 0 0;
-    -fx-padding: 0 12 0 12;
-    -fx-font-size: 13px;
+}
+
+.text-field {
+    -fx-background-color: #101b19;
+    -fx-background-radius: 11;
+    -fx-border-radius: 11;
+    -fx-border-color: #4e6558;
+    -fx-padding: 0 13;
     -fx-text-fill: -goat-ink;
     -fx-prompt-text-fill: -goat-muted;
+    -fx-highlight-fill: #405d39;
 }
 
 .text-field:focused {
     -fx-border-color: -goat-accent;
-    -fx-border-width: 2 0 0 0;
 }
 
 .button {
     -fx-background-color: -goat-accent;
-    -fx-background-radius: 0;
-    -fx-text-fill: white;
-    -fx-font-size: 13px;
+    -fx-background-radius: 11;
+    -fx-text-fill: #152318;
+    -fx-font-weight: bold;
     -fx-cursor: hand;
 }
 
 .button:hover {
-    -fx-background-color: derive(-goat-accent, -10%);
-    -fx-font-size: 14px;
+    -fx-background-color: #caf29b;
 }
 
 .button:pressed {
-    -fx-background-color: -goat-accent-dark;
+    -fx-background-color: #9fcb68;
+}
+
+.button:focused {
+    -fx-border-color: #edf4ee;
+    -fx-border-radius: 11;
+}
+
+.command-hint {
+    -fx-text-fill: -goat-muted;
+    -fx-font-size: 11px;
 }

@@ -4,7 +4,7 @@
          type="javafx.scene.layout.HBox"
          xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
   <children>
-    <Label fx:id="dialog" minHeight="-Infinity" text="Label" wrapText="true" />
-    <Label fx:id="speaker" text="GOAT" minWidth="42.0" styleClass="speaker" />
+    <Label fx:id="dialog" minHeight="-Infinity" wrapText="true" />
+    <Label fx:id="speaker" text="GOAT" minWidth="32.0" styleClass="speaker" />
   </children>
 </fx:root>

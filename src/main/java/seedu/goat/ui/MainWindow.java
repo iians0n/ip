@@ -43,15 +43,16 @@ public class MainWindow {
     private Goat goat;
 
     /**
-     * Ties the scroll position to the height of the transcript.
+     * Shows new replies without locking the scroll position.
      * <p>
-     * Binding rather than scrolling by hand after each message means the newest reply is
-     * always in view, including while the window is being resized.
+     * Waits for layout after the transcript grows, then scrolls to the bottom.
+     * Keeping the value unbound lets the user scroll back through earlier replies.
      */
     @FXML
     public void initialize() {
         assert scrollPane != null && dialogContainer != null : "FXML fills the controls first";
-        scrollPane.vvalueProperty().bind(dialogContainer.heightProperty());
+        dialogContainer.heightProperty().addListener((observable, oldHeight, newHeight) ->
+                Platform.runLater(() -> scrollPane.setVvalue(1.0)));
     }
 
     /**

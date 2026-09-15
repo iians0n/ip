@@ -5,6 +5,32 @@ Audit date: 14 September 2026. Product: **GOAT**. Fork:
 The working tree was clean at the start, at `69df496`. No existing branches,
 public tags, or historical commits were rewritten or deleted.
 
+## UI refresh — 15 September 2026 (v0.4)
+
+The final UI now uses a forest-green theme, lime accents, an original vector
+GOAT mark, a branded header, a rounded command bar and roomier message text.
+The owner's supplied CHOO screenshot inspired the header/composer structure;
+no code or artwork was copied. Attribution is recorded in the root README.
+The internal FXML message placeholder was removed. Command and storage
+behavior is unchanged. The transcript scroll value is now unbound, with
+new replies scrolling to the bottom after layout, so earlier replies remain
+available for browsing.
+
+A clean build, all 99 JUnit tests, Checkstyle and the isolated command/storage
+smoke passed. The final JAR was launched with Zulu FX Java 25.0.3 on macOS.
+Restored task lists, Enter input, enlarged/restored layout and a long
+transcript were visually inspected. Send and invalid-date responses were
+checked on the same redesigned layout before the scroll-binding fix.
+The updated `docs/Ui.png` is a genuine full-window capture of the final JAR.
+Native scroll/drag automation reported `noWindowsAvailable`, so no manual
+scroll-gesture or minimum-width verification is claimed.
+
+Release: v0.4, one `goat.jar` asset (10752803 bytes).
+SHA-256: `475ba0bf5b0f0c8cef8073260f4f84f453de23fa27aca90db82a40d050a39e4a`.
+The existing Windows/Linux workflow will verify the newly published JAR;
+its result is available in GitHub Actions. Earlier release evidence below
+is historical and does not establish the v0.4 result by itself.
+
 ## Requirements and evidence
 
 | Requirement | Existing evidence | Missing work at initial audit | Verification / outcome |

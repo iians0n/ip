@@ -1,32 +1,28 @@
 .dialog-box {
-    -bubble-sent: #285ac5;
-    -bubble-received: #ffffff;
-    -bubble-received-text: #22303f;
-
-    -fx-padding: 8 10 8 10;
+    -fx-padding: 7 18;
     -fx-spacing: 10;
 }
 
-/* The user's own messages. */
 .dialog-box #dialog {
-    -fx-background-color: -bubble-sent;
-    -fx-background-radius: 16 16 2 16;
-    -fx-text-fill: white;
-    -fx-padding: 10 14 10 14;
+    -fx-background-color: #b9e781;
+    -fx-background-radius: 14 14 3 14;
+    -fx-text-fill: #152318;
+    -fx-padding: 12 15;
     -fx-font-size: 13px;
+    -fx-line-spacing: 4;
 }
 
-/* GOAT's replies sit on the other side, so the tail corner flips with them. */
 .dialog-box #dialog.reply-label {
-    -fx-background-color: -bubble-received;
-    -fx-background-radius: 16 16 16 2;
-    -fx-text-fill: -bubble-received-text;
-    -fx-font-size: 13px;
+    -fx-background-color: #20302a;
+    -fx-background-radius: 3 14 14 14;
+    -fx-border-color: #34473b;
+    -fx-border-radius: 3 14 14 14;
+    -fx-text-fill: #edf4ee;
 }
 
 .dialog-box .speaker {
-    -fx-text-fill: #40536b;
-    -fx-font-size: 11px;
+    -fx-text-fill: #bbcabf;
+    -fx-font-size: 10px;
     -fx-font-weight: bold;
-    -fx-padding: 12 0 0 0;
+    -fx-padding: 14 0 0 0;
 }

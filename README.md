@@ -147,4 +147,7 @@ The JavaFX launcher, FXML layout and dialog pattern follow the
 Course material reuse is exempt from per-block attribution under the course
 policy; no external code snippets were copied during this Week 6 update.
 The earlier avatar photographs had no recorded source/license and have been
-removed from the current product. The current speaker labels use text only.
+removed from the current product. The speaker labels use text. The redesigned header includes an original
+geometric goat drawn with JavaFX SVGPath; no external artwork is bundled.
+The dark header and composer arrangement was inspired by a friend's CHOO iP
+screenshot supplied by the owner. Its artwork and code were not copied.

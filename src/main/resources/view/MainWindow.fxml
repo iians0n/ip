@@ -1,26 +1,48 @@
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.SVGPath?>
 
-<AnchorPane prefHeight="640.0" prefWidth="500.0" stylesheets="@../css/main.css"
+<AnchorPane prefHeight="680.0" prefWidth="520.0" stylesheets="@../css/main.css"
             xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="seedu.goat.ui.MainWindow">
   <children>
-    <ScrollPane fx:id="scrollPane" fitToWidth="true" hbarPolicy="NEVER" vbarPolicy="ALWAYS"
-                AnchorPane.topAnchor="0.0" AnchorPane.leftAnchor="0.0"
-                AnchorPane.rightAnchor="0.0" AnchorPane.bottomAnchor="41.0">
+    <HBox alignment="CENTER_LEFT" spacing="14.0" prefHeight="88.0" styleClass="brand-header"
+          AnchorPane.topAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+      <StackPane minWidth="48.0" prefWidth="48.0" maxWidth="48.0"
+                 minHeight="48.0" prefHeight="48.0" maxHeight="48.0" styleClass="brand-mark">
+        <!-- Original geometric goat: swept horns, ears, and a tapered face. -->
+        <SVGPath styleClass="goat-symbol" content="M 12 15 C 3 11 2 3 7 1 C 5 7 10 9 15 10
+                   L 21 10 C 26 9 31 7 29 1 C 34 3 33 11 24 15
+                   L 30 14 L 27 21 L 23 20 L 22 29 L 18 33 L 14 29 L 13 20 L 9 21 L 6 14 Z
+                   M 14 18 L 14 21 L 16 21 L 16 18 Z M 20 18 L 20 21 L 22 21 L 22 18 Z" />
+      </StackPane>
+      <VBox alignment="CENTER_LEFT" spacing="3.0">
+        <Label text="GOAT" styleClass="brand-title" />
+        <Label text="Small steps. Big things." styleClass="brand-subtitle" />
+      </VBox>
+    </HBox>
+    <ScrollPane fx:id="scrollPane" fitToWidth="true" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED"
+                AnchorPane.topAnchor="88.0" AnchorPane.leftAnchor="0.0"
+                AnchorPane.rightAnchor="0.0" AnchorPane.bottomAnchor="100.0">
       <content>
-        <VBox fx:id="dialogContainer" minHeight="-Infinity" />
+        <VBox fx:id="dialogContainer" minHeight="-Infinity" styleClass="transcript" />
       </content>
     </ScrollPane>
-    <TextField fx:id="userInput" onAction="#handleUserInput" prefHeight="41.0"
-               promptText="Type a command, such as todo read book"
-               AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
-               AnchorPane.rightAnchor="76.0" />
-    <Button fx:id="sendButton" mnemonicParsing="false" onAction="#handleUserInput" text="Send"
-            prefHeight="41.0" prefWidth="76.0"
-            AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0" />
+    <VBox spacing="9.0" prefHeight="100.0" styleClass="composer"
+          AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+      <HBox spacing="10.0" alignment="CENTER_LEFT">
+        <TextField fx:id="userInput" onAction="#handleUserInput" prefHeight="44.0"
+                   minWidth="80.0" HBox.hgrow="ALWAYS" promptText="What's next? Try: todo read book" />
+        <Button fx:id="sendButton" mnemonicParsing="false" onAction="#handleUserInput" text="Send"
+                prefHeight="44.0" minWidth="70.0" />
+      </HBox>
+      <Label text="Your shortcuts:  list  /  find  /  on" styleClass="command-hint" />
+    </VBox>
   </children>
 </AnchorPane>
